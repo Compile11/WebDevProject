@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
+const Post = require("./models/Post");
 const app = express();
 
 app.use(cors());
@@ -15,6 +16,27 @@ mongoose.connect(process.env.MONGO_URI)
 app.get("/", (req, res) => {
     res.send("Backend is running")
 })
+
+
+app.get("/api/posts", async (req, res) => {
+    try {
+        const posts = await Post.find().sort({createdAt: -1});
+        res.status(200).json(posts);
+    }catch(err) {
+        res.status(500).json({message : "CANNOT FETCH POSTS", err});
+    }
+})
+
+app.post("/api/posts", async (req, res) => {
+    try{
+        const newPost = newPost(req.body);
+        const savedPost = await newPost.save();
+        res.status(201).json(savedPost);
+    }catch(err) {
+        res.status(500).json({message : "CANNOT FETCH POSTS", err});
+    }
+})
+
 
 const PORT = process.env.PORT || 5000;
 
