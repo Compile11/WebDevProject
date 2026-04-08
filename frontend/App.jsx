@@ -1,14 +1,21 @@
 import { useState, useEffect } from 'react';
+import { getAllPosts } from "./api/post/get"
 
 function App() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    // Fetch the posts from your running backend
-    fetch('http://localhost:5000/api/posts')
-        .then((response) => response.json())
-        .then((data) => setPosts(data))
-        .catch((error) => console.error('Error fetching posts:', error));
+    async function loadPosts() {
+      const result = await getAllPosts()
+      if (result.error) {
+        console.error(result.error)
+        return
+      }
+
+      setPosts(result.data)
+    }
+
+    loadPosts()
   }, []);
 
   return (
