@@ -1,24 +1,38 @@
-import { apiClient } from "./client"
+import { apiClient } from "./client";
 
 export async function getAllPosts() {
   try {
     const response = await apiClient.get("/posts");
-    console.log(response.status)
+    console.log(response.status);
 
     return {
       data: response.data,
-      error: null
-    }
+      error: null,
+    };
   } catch (error) {
-    console.error("Error fetching posts:", error)
+    console.error("Error fetching posts:", error);
 
     return {
       data: null,
-      error: "Could not fetch posts"
-    }
+      error: "Could not fetch posts",
+    };
   }
 }
 
-export async function createNewPost(data) {
+export async function createNewPost(postData) {
+  try {
+    const { data } = await apiClient.post("/posts", postData);
 
+    return {
+      data,
+      error: null,
+    };
+  } catch (error) {
+    console.error("Error creating post:", error);
+
+    return {
+      data: null,
+      error: error.response?.data?.error || "Could not create post",
+    };
+  }
 }

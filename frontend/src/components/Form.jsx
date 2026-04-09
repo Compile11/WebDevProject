@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createNewPost } from "../../api/posts"
 
 export const Create = ({ setPosts }) => {
   const [title, setTitle] = useState("");
@@ -17,27 +18,19 @@ export const Create = ({ setPosts }) => {
 
     const post = { title, body, author, tags: tagsArray };
 
-    try {
-      const response = await fetch("http://localhost:3000/api/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(post),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to create post");
-      }
+    const result = await createNewPost(post);
 
-      const savedPost = await response.json();
+    if (result.error) {
+      console.error(result.error);
+      return;
+    }
 
-      setPosts((prevPosts) => [savedPost, ...prevPosts])
+    setPosts((prev) => [result.data, ...prev])
 
-      setTitle("");
-      setBody("");
-      setAuthor("");
-      setTags("");
-    } catch (error) {
-      console.error("Error creating post:", error);
-    } 
+    setTitle("")
+    setBody("")
+    setAuthor("")
+    setTags("")
   }
 
 

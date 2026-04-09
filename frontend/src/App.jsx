@@ -26,7 +26,9 @@ function App() {
       <div style={{ paddingLeft: "200px", paddingRight: "200px", fontFamily: "sans-serif" }}>
         <h1>Compile Discussion Board</h1>
 
-        <Create />
+        <Create 
+          setPosts={setPosts}
+        />
 
         {posts.length === 0 ? (
           <p>Loading posts...</p>
