@@ -23,7 +23,7 @@ function App() {
       <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
         <h1>Compile Discussion Board</h1>
 
-        // temporarily rendering form for testing, can be deleted
+
         <Create />
 
         {posts.length === 0 ? (
