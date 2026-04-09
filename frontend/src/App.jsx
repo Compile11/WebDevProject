@@ -25,11 +25,9 @@ function App() {
       <NavBar />
       <div style={{ paddingLeft: "200px", paddingRight: "200px", fontFamily: "sans-serif" }}>
         <h1>Compile Discussion Board</h1>
-        // temporarily rendering form for testing, can be deleted
-        <Create 
-          setPosts={setPosts}
-          posts={posts}
-        />
+
+        <Create />
+
         {posts.length === 0 ? (
           <p>Loading posts...</p>
         ) : (
