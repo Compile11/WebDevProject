@@ -2,7 +2,7 @@ import { apiClient } from "./client";
 
 export async function getAllPosts() {
   try {
-    const response = await apiClient.get("/posts");
+    const response = await apiClient.get("/api/posts");
     console.log(response.status);
 
     return {
@@ -21,7 +21,7 @@ export async function getAllPosts() {
 
 export async function createNewPost(postData) {
   try {
-    const { data } = await apiClient.post("/posts", postData);
+    const { data } = await apiClient.post("/api/posts", postData);
 
     return {
       data,

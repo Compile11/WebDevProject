@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import { HomeIcon, PlusIcon } from "lucide-react";
+import { CircleUser, HomeIcon, PlusIcon } from "lucide-react";
 
 export const NavBar = () => {
   return (
-    <div className="w-full py-4">
-      <div className="mx-[200px] flex items-center justify-between text-white">
+    <div className="w-full h-[60px]">
+      <div className="mx-[200px] h-full flex items-center justify-between text-white">
         <div className="flex items-center space-x-4">
         {routes.map((route) => (
           <Link
@@ -24,9 +24,17 @@ export const NavBar = () => {
         </div>
 
         <div>
+          {/* if logged out: */}
           <Link to="/auth" className="bg-blue-500 hover:bg-blue-600 px-4 py-1 rounded transition-all">
             Login
           </Link>
+
+          {/* if logged in: */}
+          {false && (
+            <Link to={`/account/${userId}`}> 
+              <CircleUser />
+            </Link>
+          )}
         </div>
       </div>
     </div>
@@ -40,7 +48,7 @@ const routes = [
     icon: <HomeIcon />,
   },
   {
-    href: "/p",
+    href: "/post",
     label: "Post",
     icon: <PlusIcon />,
   },
