@@ -1,21 +1,37 @@
 import { apiClient } from "./client";
 
-export async function authenticateUser({ isLogin, email, password, username }) {
-  const endpoint = isLogin ? "/api/users/login" : "/api/users/register";
-  const payload = isLogin ? { email, password } : { username, email, password }
-  
+export async function registerUser({ username, email, password }) {
   try {
-    const response = await apiClient.post(endpoint, payload)
+    const response = await apiClient.post("/api/users/register", {
+      username,
+      email,
+      password,
+    });
 
-    return response.data;
-  } catch (err) {
-    if (err.response) {
-      throw new Error(err.response.data.message || "Something went wrong")
-    }
-
-    throw new Error("Cannot connect to server")
+    return response.data
+  } catch (err) { 
+    throw err.response?.data || { message: "Registration failed" }
   }
+}
 
+export async function loginUser({ email, password }) {
+  try {
+    const response = await apiClient.post("/api/users/login", {
+      email,
+      password
+    })
 
+    return response.data
+  } catch (err) {
+    throw err.response?.data || { message: "Login failed" }
+  }
+}
 
+export async function getCurrentUser() {
+  try {
+    const response = await apiClient.get("/api/users/me");
+    return response.data
+  } catch (err) {
+    throw err.response?.data || { message: "Failed to fetch current user" }
+  }
 }

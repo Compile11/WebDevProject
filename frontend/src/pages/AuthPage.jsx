@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { authenticateUser } from "../api/auth";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { loginUser, registerUser } from "../api/auth";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -8,32 +10,47 @@ export default function AuthPage() {
   const [username, setUsername] = useState("");
   const [message, setMessage] = useState("");
 
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setMessage("")
+    e.preventDefault();
+    setMessage("");
 
     try {
-      const data = await authenticateUser({
-        isLogin,
-        email,
-        password,
-        username
-      })
-
       if (isLogin) {
-        setMessage(`LOGGED IN AS ${data.user.username}`)
-        console.log("YOUR JWT TOKEN:", data.token)
+        const data = await loginUser({
+          email,
+          password,
+        });
+
+        login({
+          user: data.user,
+          token: data.token,
+        });
+
+        setMessage(`LOGGED IN AS ${data.user.username}`);
+        navigate("/");
       } else {
-        setMessage("ACCOUNT CREATED, YOU CAN NOW LOGIN");
-        setIsLogin(true)
-        setPassword("");
-        setUsername("");
+        const data = await registerUser({
+          username,
+          email,
+          password,
+        });
+
+        login({
+          user: data.user,
+          token: data.token,
+        });
+
+        setMessage(`ACCOUNT CREATED. LOGGED IN AS ${data.user.username}`);
+        navigate("/");
       }
     } catch (error) {
       console.error("AUTHENTICATION ERROR:", error);
-      setMessage(error.message)
+      setMessage(error.message || "Authentication failed");
     }
-  }
+  };
 
   return (
     <div className="flex flex-row h-screen w-screen">
@@ -121,7 +138,7 @@ export default function AuthPage() {
       </div>
 
       <div className="relative w-1/2 h-full dark:opacity-75 transition-all duration-300">
-        <img 
+        <img
           src="/AuthPageCover.jpg"
           alt="Auth page cover"
           className="w-full h-full object-cover"

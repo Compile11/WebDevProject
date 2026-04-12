@@ -55,7 +55,7 @@ export default function ThemeToggle() {
   }
 
   return (
-    <div className="fixed top-4 right-4 z-50">
+    <div className="fixed top-2 right-2 z-50">
       <div className="group relative flex flex-col items-end">
         <button className={buttonClass(true)}>{getThemeIcon(theme)}</button>
 
