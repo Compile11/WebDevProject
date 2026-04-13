@@ -1,6 +1,7 @@
 import { Create } from "../components/Form"
 import { useState, useEffect } from "react"
 import { getAllPosts } from "../api/posts";
+import CommentsSection from "../components/CommentsSection"
 
 export default function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -45,6 +46,8 @@ export default function HomePage() {
             <small>Posted by {post.author}</small>
             <br />
             <small>Tags: {post.tags.join(", ")}</small>
+
+            <CommentsSection postId={post._id} />
           </div>
         ))
       )}

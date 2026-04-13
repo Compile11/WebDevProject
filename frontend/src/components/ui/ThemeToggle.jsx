@@ -49,8 +49,8 @@ export default function ThemeToggle() {
 
   function buttonClass(isActive = false) {
     return `flex items-center justify-center rounded-full p-2 transition-colors cursor-pointer ${isActive
-        ? "bg-gray-300 text-black dark:bg-gray-600 dark:text-white"
-        : "bg-gray-200 hover:bg-gray-300 text-black dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+        ? "bg-gray-200 text-black dark:bg-gray-600 dark:text-white"
+        : "bg-gray-300 hover:bg-gray-200 text-black dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
       }`;
   }
 
