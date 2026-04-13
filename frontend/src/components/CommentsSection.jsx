@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext'; // Importing your teammate's context!
+import { useAuth } from '../context/AuthContext';
 
 export default function CommentsSection({ postId }) {
-    // 1. All hooks must live right here at the top of the component!
+    // 1. All hooks must live right here at the top of the component
     const { currentUser } = useAuth();
     const [comments, setComments] = useState([]);
     const [newCommentText, setNewCommentText] = useState('');
@@ -41,7 +41,6 @@ export default function CommentsSection({ postId }) {
         const token = localStorage.getItem('token');
 
         try {
-            // NO MORE GITHUB! Pointing directly to your local database
             const response = await fetch(`http://localhost:5000/api/posts/${postId}/comments`, {
                 method: 'POST',
                 headers: {
