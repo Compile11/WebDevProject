@@ -11,7 +11,7 @@ export default function AccountButton() {
       {!currentUser ? (
         <Link
           to="/auth"
-          className="bg-blue-500 hover:bg-blue-600 px-4 py-1 rounded transition-all"
+          className="bg-blue-500 hover:bg-blue-600 px-4 py-1 rounded transition-all text-white"
         >
           Login
         </Link>

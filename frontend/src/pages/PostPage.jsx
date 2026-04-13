@@ -1,46 +1,74 @@
 import { useState } from "react";
 import { createNewPost } from "../api/posts";
+import { useAuth } from "../context/AuthContext";
+import { Loader } from "lucide-react";
 
 export default function PostPage() {
   const [postData, setPostData] = useState({
     title: "",
     body: "",
-    author: "",
     tags: "",
   });
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { currentUser } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    console.log("hello");
+
+    if (!currentUser) {
+      setError("Login or signup to post!");
+      setIsLoading(false);
+      return;
+    }
 
     const newPost = {
       ...postData,
-      author: postData.author || "Anonymous Student",
       tags: postData.tags
         .split(",")
         .map((tag) => tag.trim())
         .filter(Boolean),
     };
 
-    const result = await createNewPost(newPost);
+    try {
+      await createNewPost(newPost);
 
-    if (result.error) {
-      console.error(result.error);
-      return;
+      setPostData({
+        title: "",
+        body: "",
+        tags: "",
+      });
+
+      setSuccess("Post created!");
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Failed to create post");
+    } finally {
+      setIsLoading(false);
     }
-
-    console.log("Created post:", result.data);
-
-    setPostData({
-      title: "",
-      body: "",
-      author: "",
-      tags: "",
-    });
   };
 
   return (
     <div className="mx-[200px] pt-6">
       <h1 className="text-2xl font-bold mb-4">Create Post</h1>
+
+      {error && (
+        <div className="mb-4 rounded bg-red-100 px-3 py-2 text-red-700">
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="mb-4 rounded bg-green-100 px-3 py-2 text-green-700">
+          {success}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
@@ -63,17 +91,6 @@ export default function PostPage() {
           className="border rounded px-3 py-2 min-h-[150px]"
           required
         />
-
-        <input
-          type="text"
-          placeholder="Author"
-          value={postData.author}
-          onChange={(e) =>
-            setPostData((prev) => ({ ...prev, author: e.target.value }))
-          }
-          className="border rounded px-3 py-2"
-        />
-
         <input
           type="text"
           placeholder="Tags (comma separated)"
@@ -86,9 +103,10 @@ export default function PostPage() {
 
         <button
           type="submit"
-          className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600"
+          className="flex items-center justify-center bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600 cursor-pointer"
+          disabled={isLoading}
         >
-          Submit
+          {isLoading ? <Loader className="animate-spin" size={18} /> : "Submit"}
         </button>
       </form>
     </div>

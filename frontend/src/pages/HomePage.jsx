@@ -43,7 +43,7 @@ export default function HomePage() {
           >
             <h2>{post.title}</h2>
             <p>{post.body}</p>
-            <small>Posted by {post.author}</small>
+            <small>Posted by {post.userId?.username}</small>
             <br />
             <small>Tags: {post.tags.join(", ")}</small>
 

@@ -21,18 +21,9 @@ export async function getAllPosts() {
 
 export async function createNewPost(postData) {
   try {
-    const { data } = await apiClient.post("/api/posts", postData);
-
-    return {
-      data,
-      error: null,
-    };
+    const response = await apiClient.post("/api/posts", postData)
+    return response.data;
   } catch (error) {
-    console.error("Error creating post:", error);
-
-    return {
-      data: null,
-      error: error.response?.data?.error || "Could not create post",
-    };
+    throw error.response?.data || { message: "Failed to create post" }
   }
 }
