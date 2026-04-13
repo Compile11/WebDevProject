@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 console.log("---> Profile routing file successfully loaded!");
+
+
 const verifyToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) return res.status(401).json({message:"No Token Provided"});
@@ -22,17 +24,17 @@ const verifyToken = (req, res, next) => {
 //PUT ROUTE: Update users profile
 router.put("/update", verifyToken, async (req, res) => {
     try{
-        const {username} = req.body;
+        const {username, bio} = req.body;
 
         //find user ID hidden inside their secure token
         const updatedUser = await User.findByIdAndUpdate(
             req.user.id||req.user.userId||req.user._id,
-            {username:username},
-            {new: true}
+            {username:username, bio:bio},
+            {returnDocument: "after"}
         );
         if(!updatedUser) return res.status(404).json({message:"User not found"});
 
-        res.status(200).json({updatedUser});
+        res.status(200).json(updatedUser);
     }catch(err){
         console.error("PROFILE UPDATE ERROR: ", err);
         res.status(500).json({message: "SERVER ERROR UPDATING PROFILE"});
