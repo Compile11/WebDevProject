@@ -20,6 +20,7 @@ app.use(
 app.use(express.json());
 app.use("/api/users", authRoutes);
 app.use("/api/posts/:postId/comments", commentRoutes);
+app.use("/api/profile", require("./routes/users"));
 
 mongoose
   .connect(process.env.MONGO_URI)
