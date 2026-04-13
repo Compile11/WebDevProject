@@ -2,20 +2,21 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginUser, registerUser } from "../api/auth";
+import { ArrowLeft } from "lucide-react";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
+    setError("");
 
     try {
       if (isLogin) {
@@ -29,7 +30,7 @@ export default function AuthPage() {
           token: data.token,
         });
 
-        setMessage(`LOGGED IN AS ${data.user.username}`);
+        setError(`LOGGED IN AS ${data.user.username}`);
         navigate("/");
       } else {
         const data = await registerUser({
@@ -43,28 +44,34 @@ export default function AuthPage() {
           token: data.token,
         });
 
-        setMessage(`ACCOUNT CREATED. LOGGED IN AS ${data.user.username}`);
+        setError(`ACCOUNT CREATED. LOGGED IN AS ${data.user.username}`);
         navigate("/");
       }
     } catch (error) {
       console.error("AUTHENTICATION ERROR:", error);
-      setMessage(error.message || "Authentication failed");
+      setError(error.error || "Authentication failed");
     }
   };
 
   return (
-    <div className="flex flex-row h-screen w-screen">
+    <div className="relative flex flex-row h-screen w-screen">
+      <div 
+        onClick={() => navigate("/")}
+        className="absolute top-2 left-2 rounded-full bg-gray-700 hover:bg-gray-600 p-1 hover:text-white transition-all cursor-pointer"
+      >
+        <ArrowLeft />
+      </div>
       <div className="flex justify-center items-center h-full w-1/2 bg-gray-50 dark:bg-gray-800 transition-all">
         <div className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md w-full max-w-md border border-gray-200 dark:border-gray-600">
           <h2 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-50 pb-2">
             {isLogin ? "Welcome Back to Compile" : "Join the Discussion"}
           </h2>
 
-          {message && (
+          {error && (
             <div
-              className={`p-3 mb-4 text-sm rounded ${message.includes("Success") || message.includes("created") ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+              className="p-3 mb-4 text-sm rounded bg-red-100 text-red-700"
             >
-              {message}
+              {error}
             </div>
           )}
 
@@ -127,7 +134,7 @@ export default function AuthPage() {
             <button
               onClick={() => {
                 setIsLogin(!isLogin);
-                setMessage(""); // Clear errors when toggling
+                setError(""); // Clear errors when toggling
               }}
               className="text-blue-600 font-semibold hover:underline cursor-pointer"
             >
