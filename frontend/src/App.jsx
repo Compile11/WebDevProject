@@ -5,6 +5,7 @@ import AuthPage from "./pages/AuthPage"
 import PostPage from "./pages/PostPage";
 import ThemeToggle from "./components/ui/ThemeToggle";
 import { useLocation } from "react-router-dom"
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   const location = useLocation();
@@ -24,6 +25,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/post" element={<PostPage />} />
+            <Route path="/account" element={<ProfilePage />} />
         </Routes>
       </div>
     </div>

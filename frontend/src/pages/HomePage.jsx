@@ -24,9 +24,6 @@ export default function HomePage() {
     <>
       <h1>Compile Discussion Board</h1>
 
-      <Create
-        setPosts={setPosts}
-      />
 
       {posts.length === 0 ? (
         <p>Loading posts...</p>
