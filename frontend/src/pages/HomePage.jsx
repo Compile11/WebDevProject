@@ -23,7 +23,7 @@ export default function HomePage() {
   return (
     <>
       <h1>Compile Discussion Board</h1>
-      
+
 
       {posts.length === 0 ? (
         <p>Loading posts...</p>
