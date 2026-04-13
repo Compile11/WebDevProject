@@ -24,7 +24,7 @@ export default function ProfilePage() {
     currentUser?.username || "",
   );
   const [message, setMessage] = useState("");
-  const [bioField, setBioField] = useState(currentUser?.bio || "");
+  const [bioField, setBioField] = useState(currentUser.bio || "");
 
   // 2. NEW: Activity Feed State
   const [myPosts, setMyPosts] = useState([]);
@@ -39,7 +39,7 @@ export default function ProfilePage() {
     setIsLoadingPosts(false);
     loadUserPosts();
   }, [currentUser]);
-  const hasChanges = usernameField !== currentUser.username || bioField !== "";
+  const hasChanges = usernameField !== currentUser.username || bioField !== currentUser.bio;
 
   const handleSave = async () => {
     if (!hasChanges) return;
