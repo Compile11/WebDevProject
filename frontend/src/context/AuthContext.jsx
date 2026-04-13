@@ -6,7 +6,7 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
 
   const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
       const token = localStorage.getItem("token");
 
       if (!token) {
-        setLoading(false);
+        setAuthLoading(false);
         return;
       }
 
@@ -37,7 +37,7 @@ export function AuthProvider({ children }) {
         localStorage.removeItem("token");
         setCurrentUser(null);
       } finally {
-        setLoading(false);
+        setAuthLoading(false);
       }
     }
 
@@ -46,7 +46,7 @@ export function AuthProvider({ children }) {
 
   return (
   <AuthContext.Provider
-      value={{ currentUser, setCurrentUser, login, logout, loading }}
+      value={{ currentUser, setCurrentUser, login, logout, authLoading }}
     >
       {children}
     </AuthContext.Provider>

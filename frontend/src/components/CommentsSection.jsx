@@ -95,7 +95,7 @@ export default function CommentsSection({ postId }) {
         />
         <button
           type="submit"
-          className="self-end bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700 transition"
+          className="self-end bg-blue-600 text-white px-4 py-2 rounded text-sm font-bold hover:bg-blue-700 transition cursor-pointer"
         >
           Post Reply
         </button>

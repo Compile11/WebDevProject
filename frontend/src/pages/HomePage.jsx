@@ -1,7 +1,7 @@
-import { Create } from "../components/Form"
-import { useState, useEffect } from "react"
+import { Create } from "../components/Form";
+import { useState, useEffect } from "react";
 import { getAllPosts } from "../api/posts";
-import CommentsSection from "../components/CommentsSection"
+import CommentsSection from "../components/CommentsSection";
 
 export default function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -24,19 +24,13 @@ export default function HomePage() {
     <>
       <h1>Compile Discussion Board</h1>
 
-
       {posts.length === 0 ? (
         <p>Loading posts...</p>
       ) : (
         posts?.map((post) => (
           <div
             key={post._id}
-            style={{
-              border: "1px solid #ccc",
-              margin: "10px 0",
-              padding: "15px",
-              borderRadius: "5px",
-            }}
+            className="border border-gray-300 my-2.5 p-[15px] rounded-md"
           >
             <h2>{post.title}</h2>
             <p>{post.body}</p>
@@ -49,5 +43,5 @@ export default function HomePage() {
         ))
       )}
     </>
-  )
+  );
 }

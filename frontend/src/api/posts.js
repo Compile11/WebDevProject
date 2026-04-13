@@ -3,7 +3,6 @@ import { apiClient } from "./client";
 export async function getAllPosts() {
   try {
     const response = await apiClient.get("/api/posts");
-    console.log(response.status);
 
     return {
       data: response.data,
@@ -16,6 +15,24 @@ export async function getAllPosts() {
       data: null,
       error: "Could not fetch posts",
     };
+  }
+}
+
+export async function getPostsByUserId(userId) {
+  try {
+    const response = await apiClient.get(`/api/posts/${userId}`)
+    
+    return {
+      data: response.data,
+      error: null
+    }
+  } catch (err) {
+    console.error(`Error fetching posts for userId: ${userId}:`, err)
+
+    return {
+      data: null,
+      error: err.response?.data?.message || "Error fetching posts"
+    }
   }
 }
 

@@ -35,9 +35,25 @@ app.get("/api/posts", async (_req, res) => {
   try {
     const posts = await Post.find()
       .populate("userId", "username email")
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: -1 });
 
-    res.status(200).json(posts)
+    res.status(200).json(posts);
+  } catch (err) {
+    res.status(500).json({ message: "CANNOT FETCH POSTS", err });
+  }
+});
+
+app.get("/api/posts/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
+    }
+
+    const posts = await Post.find({ userId }).populate("userId", "username email").sort({ createdAt: -1 });
+
+    res.status(200).json(posts);
   } catch (err) {
     res.status(500).json({ message: "CANNOT FETCH POSTS", err });
   }

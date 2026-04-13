@@ -1,10 +1,13 @@
 import { Link } from "react-router-dom";
-import { CircleUser, LogOut, Settings, User } from "lucide-react";
+import { CircleUser, Loader, LogOut, Settings, User } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
 export default function AccountButton() {
-  const { currentUser, logout } = useAuth();
-  console.log(currentUser);
+  const { currentUser, logout, authLoading } = useAuth();
+
+  if (authLoading) {
+    return <Loader className="animate-spin" />
+  }
 
   return (
     <div className="relative group text-gray-700 dark:text-white">
