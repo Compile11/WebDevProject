@@ -1,8 +1,13 @@
 import { apiClient } from "./client";
 
-export async function updateUserUsername(username) {
+export async function updateUser({ username, bio }) {
+  const updates = {};
+
+  if (username !== undefined) updates.username = username;
+  if (bio !== undefined) updates.bio = bio;
+
   try {
-    const response = await apiClient.put("/api/profile/update-username", username);
+    const response = await apiClient.put("/api/profile/update", updates);
 
     return {
       data: response.data,

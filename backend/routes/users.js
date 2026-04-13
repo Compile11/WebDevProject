@@ -3,26 +3,32 @@ const router = express.Router();
 const User = require("../models/User");
 const authMiddleware = require("../middleware/authMiddleware");
 
-
 console.log("---> Profile routing file successfully loaded!");
 
 //PUT ROUTE: Update users profile
-router.put("/update-username", authMiddleware, async (req, res) => {
+router.put("/update", authMiddleware, async (req, res) => {
   try {
-    const { username } = req.body;
-    if (!username) {
-      return res.status(400).json({ message: "username is required" });
+    const updates = { ...req.body };
+
+    const restrictedFields = ["password", "email", "passwordHash", "_id"];
+
+    restrictedFields.forEach((field) => delete updates[field]);
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: "No value fields to update" });
     }
 
-    const usernameTaken = await User.exists({ username })
-    if (usernameTaken) {
-      return res.status(400).json({ message: "Username already taken" })
+    if (updates?.username) {
+      const usernameTaken = await User.exists({ username: updates.username });
+      if (usernameTaken) {
+        return res.status(400).json({ message: "Username already taken" });
+      }
     }
 
     //find user ID hidden inside their secure token
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
-      { username },
+      updates,
       { new: true },
     );
 
@@ -38,10 +44,10 @@ router.put("/update-username", authMiddleware, async (req, res) => {
 
 router.put("/update-email", authMiddleware, async (req, res) => {
   // TODO
-})
+});
 
 router.put("/update-password", authMiddleware, async (req, res) => {
   // TODO
-})
+});
 
 module.exports = router;

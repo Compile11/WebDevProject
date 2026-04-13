@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { getPostsByUserId } from "../api/posts";
-import { updateUserUsername } from "../api/user";
+import { updateUser } from "../api/user";
 import { Edit, Check } from "lucide-react";
 
 export default function ProfilePage() {
   const { currentUser, authLoading } = useAuth();
+  console.log(currentUser)
 
   if (authLoading) {
     return <div>Loading...</div>;
@@ -23,7 +24,7 @@ export default function ProfilePage() {
     currentUser?.username || "",
   );
   const [message, setMessage] = useState("");
-  const [bioField, setBioField] = useState("");
+  const [bioField, setBioField] = useState(currentUser?.bio || "");
 
   // 2. NEW: Activity Feed State
   const [myPosts, setMyPosts] = useState([]);
@@ -38,11 +39,26 @@ export default function ProfilePage() {
     setIsLoadingPosts(false);
     loadUserPosts();
   }, [currentUser]);
-  const hasChanges =
-    usernameField !== currentUser.username || bioField !== "";
+  const hasChanges = usernameField !== currentUser.username || bioField !== "";
 
   const handleSave = async () => {
-    const result = await updateUserUsername({ username: usernameField });
+    if (!hasChanges) return;
+
+    let newUsername;
+    let newBio;
+
+    if (usernameField !== currentUser.username) {
+      newUsername = usernameField;
+    }
+
+    if (newBio !== "") {
+      newBio = bioField;
+    }
+
+    const result = await updateUser({
+      username: newUsername || undefined,
+      bio: newBio || undefined,
+    });
     if (result.error) {
       setMessage(`ERROR: ${result.error}`);
       console.log(result);
