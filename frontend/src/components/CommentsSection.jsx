@@ -12,7 +12,7 @@ export default function CommentsSection({ postId }) {
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                // NO MORE GITHUB! Pointing directly to your local database
+                // NO MORE GITHUB
                 const response = await fetch(`http://localhost:5000/api/posts/${postId}/comments`);
                 if(response.ok){
                     const data = await response.json();
@@ -27,7 +27,7 @@ export default function CommentsSection({ postId }) {
         fetchComments();
     }, [postId]);
 
-    // 3. The POST Request: Sends your new comment to the server
+    // 3. The POST Request: Sends new comment to the server
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -49,7 +49,6 @@ export default function CommentsSection({ postId }) {
                 },
                 body: JSON.stringify({
                     text: newCommentText,
-                    // Pulling directly from your secure AuthContext
                     authorName: currentUser.username || currentUser.email
                 }),
             });

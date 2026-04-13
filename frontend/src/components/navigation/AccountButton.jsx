@@ -29,7 +29,7 @@ export default function AccountButton() {
             </Link>
         ) : (
             <div>
-              {/* Changed from <Link> to <button> to trigger the dropdown, but kept all of your teammate's awesome hover styling! */}
+
               <button
                   onClick={() => setIsOpen(!isOpen)}
                   className="group flex flex-row items-center bg-gray-800 rounded-full p-2 hover:bg-gray-700 transition-all focus:outline-none"
@@ -52,7 +52,7 @@ export default function AccountButton() {
                       </p>
                     </div>
 
-                    {/* Moved their original /account link into the dropdown! */}
+
                     <Link
                         to="/account"
                         onClick={() => setIsOpen(false)}
