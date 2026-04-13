@@ -21,6 +21,11 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
+    bio: {
+        type: String,
+        default: "I am new member of Compile",
+        maxLength: 200,
+    }
   },
   { timestamps: true },
 );

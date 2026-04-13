@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
-import { getAllPosts, getPostsByUserId } from "../api/posts";
+import { getPostsByUserId } from "../api/posts";
 import { updateUserUsername } from "../api/user";
+import { Edit, Check } from "lucide-react";
 
 export default function ProfilePage() {
   const { currentUser, authLoading } = useAuth();
@@ -18,8 +19,11 @@ export default function ProfilePage() {
 
   // 1. Edit Profile State
   const [isEditing, setIsEditing] = useState(false);
-  const [newUsername, setNewUsername] = useState(currentUser?.username || "");
+  const [usernameField, setUsernameField] = useState(
+    currentUser?.username || "",
+  );
   const [message, setMessage] = useState("");
+  const [bioField, setBioField] = useState("");
 
   // 2. NEW: Activity Feed State
   const [myPosts, setMyPosts] = useState([]);
@@ -34,9 +38,11 @@ export default function ProfilePage() {
     setIsLoadingPosts(false);
     loadUserPosts();
   }, [currentUser]);
+  const hasChanges =
+    usernameField !== currentUser.username || bioField !== "";
 
   const handleSave = async () => {
-    const result = await updateUserUsername({ username: newUsername });
+    const result = await updateUserUsername({ username: usernameField });
     if (result.error) {
       setMessage(`ERROR: ${result.error}`);
       console.log(result);
@@ -61,22 +67,60 @@ export default function ProfilePage() {
 
         {/* Profile Identity Card */}
         <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6 mb-8 flex items-center gap-6">
-          <div className="w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center text-4xl font-bold text-white shadow-inner">
-            {currentUser.username.charAt(0).toUpperCase()}
+          <div className="group relative w-24 h-24 cursor-pointer overflow-hidden rounded-full flex items-center justify-center text-4xl font-bold text-white shadow-inner">
+            <div className="absolute inset-0 bg-blue-600 transition-opacity group-hover:opacity-30" />
+
+            <span className="relative z-10 transition-all group-hover:opacity-30">
+              {currentUser.username.charAt(0).toUpperCase()}
+            </span>
+
+            <div
+              className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-10"
+              onClick={() => {
+                if (isEditing && hasChanges) {
+                  handleSave();
+                } else {
+                  setIsEditing(true);
+                }
+              }}
+            >
+              {isEditing && hasChanges ? (
+                <Check className="w-10 h-10 text-green-400" />
+              ) : (
+                <Edit className="w-6 h-6" />
+              )}
+            </div>
           </div>
 
           <div className="flex-1">
             {isEditing ? (
-              <input
-                type="text"
-                value={newUsername}
-                onChange={(e) => setNewUsername(e.target.value)}
-                className="w-full max-w-xs p-2 bg-gray-900 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-              />
+              <div className="flex flex-col gap-2 max-w-md">
+                <input
+                  type="text"
+                  value={usernameField}
+                  onChange={(e) => setUsernameField(e.target.value)}
+                  className="p-2 bg-gray-900 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold"
+                />
+                <textarea
+                  value={bioField}
+                  onChange={(e) => setBioField(e.target.value)}
+                  placeholder="Tell the community about yourself..."
+                  className="p-2 bg-gray-900 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none h-20"
+                  maxLength={200}
+                />
+              </div>
             ) : (
-              <h2 className="text-2xl font-bold text-white">
-                {currentUser.username}
-              </h2>
+              <div>
+                {/* We now display the React state directly! */}
+                <h2 className="text-2xl font-bold text-white">
+                  {usernameField}
+                </h2>
+                <p className="text-gray-400 mt-1">{currentUser.email}</p>
+                <p className="text-gray-300 mt-3 text-sm italic border-l-2 border-blue-500 pl-3">
+                  {bioField ||
+                    "No bio added yet. Click Edit Profile to add one!"}
+                </p>
+              </div>
             )}
 
             <p className="text-gray-400 mt-1">{currentUser.email}</p>
@@ -85,38 +129,6 @@ export default function ProfilePage() {
             </span>
           </div>
         </div>
-
-        {/* Account Settings / Edit Buttons */}
-        <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6 mb-8">
-          <h3 className="text-xl font-semibold text-white mb-4">
-            Account Settings
-          </h3>
-
-          {isEditing ? (
-            <div className="flex gap-3">
-              <button
-                onClick={handleSave}
-                className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition"
-              >
-                Save Changes
-              </button>
-              <button
-                onClick={() => setIsEditing(false)}
-                className="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded transition"
-              >
-                Cancel
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition"
-            >
-              Edit Profile
-            </button>
-          )}
-        </div>
-
         {/* NEW: User Activity Feed */}
         <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
           <div className="flex justify-between items-center mb-6">
