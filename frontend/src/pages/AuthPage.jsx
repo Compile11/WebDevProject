@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginUser, registerUser } from "../api/auth";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader } from "lucide-react";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -10,6 +10,7 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false)
 
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -17,6 +18,7 @@ export default function AuthPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true)
 
     try {
       if (isLogin) {
@@ -30,7 +32,6 @@ export default function AuthPage() {
           token: data.token,
         });
 
-        setError(`LOGGED IN AS ${data.user.username}`);
         navigate("/");
       } else {
         const data = await registerUser({
@@ -44,12 +45,13 @@ export default function AuthPage() {
           token: data.token,
         });
 
-        setError(`ACCOUNT CREATED. LOGGED IN AS ${data.user.username}`);
         navigate("/");
       }
     } catch (error) {
       console.error("AUTHENTICATION ERROR:", error);
       setError(error.error || "Authentication failed");
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -57,7 +59,7 @@ export default function AuthPage() {
     <div className="relative flex flex-row h-screen w-screen">
       <div 
         onClick={() => navigate("/")}
-        className="absolute top-2 left-2 rounded-full bg-gray-700 hover:bg-gray-600 p-1 hover:text-white transition-all cursor-pointer"
+        className="absolute top-2 left-2 rounded-full bg-gray-200 hover:bg-gray-300 hover:text-gray-500 dark:bg-gray-700 dark:hover:bg-gray-600 p-1 dark:hover:text-white transition-all cursor-pointer"
       >
         <ArrowLeft />
       </div>
@@ -123,9 +125,9 @@ export default function AuthPage() {
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-200 cursor-pointer"
+              className="flex items-center justify-center w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition duration-200 cursor-pointer"
             >
-              {isLogin ? "Log In" : "Create Account"}
+              {isLoading ? <Loader className="animate-spin" size={18} /> : isLogin ? "Log In" : "Create Account"}
             </button>
           </form>
 
