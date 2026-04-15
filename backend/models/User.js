@@ -25,7 +25,15 @@ const userSchema = new Schema(
         type: String,
         default: "I am new member of Compile",
         maxLength: 200,
-    }
+    },
+      resetPasswordToken: {
+        type: String,
+          default: null,
+      },
+      resetPasswordExpires: {
+        type: Date,
+          default: null,
+      }
   },
   { timestamps: true },
 );

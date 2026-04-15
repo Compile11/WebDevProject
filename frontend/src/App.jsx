@@ -6,6 +6,8 @@ import PostPage from "./pages/PostPage";
 import ThemeToggle from "./components/ui/ThemeToggle";
 import { useLocation } from "react-router-dom"
 import ProfilePage from "./pages/ProfilePage";
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   const location = useLocation();
@@ -26,6 +28,8 @@ function App() {
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/post" element={<PostPage />} />
             <Route path="/account" element={<ProfilePage />} />
+          <Route path = "/forgot-password" element={<ForgotPassword />} />
+          <Route path = "/reset-password/:token" element={<ResetPassword/>}/>
         </Routes>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginUser, registerUser } from "../api/auth";
 import { ArrowLeft, Loader } from "lucide-react";
@@ -121,6 +121,14 @@ export default function AuthPage() {
                 className="w-full p-2 border border-gray-300 text-black dark:text-gray-50 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="••••••••"
               />
+            </div>
+            <div className="flex justify-end mt-1 mb-4">
+              <Link
+                  to="/forgot-password"
+                  className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                Forgot Password?
+              </Link>
             </div>
 
             <button
