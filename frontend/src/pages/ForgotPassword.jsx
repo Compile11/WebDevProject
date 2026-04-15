@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {Link} from "react-router-dom";
 
 export default function ForgotPassword() {
@@ -12,7 +12,7 @@ export default function ForgotPassword() {
         setMessage("");
 
         try{
-            const response = await fetch(`http://localhost:5000/api/users/reset-password/${token}`, {
+            const response = await fetch(`http://localhost:3000/api/users/reset-password/`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({email}),

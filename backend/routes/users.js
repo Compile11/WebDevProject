@@ -46,8 +46,4 @@ router.put("/update-email", authMiddleware, async (req, res) => {
   // TODO
 });
 
-router.put("/update-password", authMiddleware, async (req, res) => {
-  // TODO
-});
-
 module.exports = router;
