@@ -186,10 +186,25 @@ router.put("/reset-password/:token", async (req, res) => {
   }
 })
 
+// GET ROUTE: Fetch full user profile
 router.get("/me", authMiddleware, async (req, res) => {
   try {
+    // 1. Grab the full, fresh profile from the database
+    const user = await User.findById(req.user.id).select("-passwordHash");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // 2. Send the COMPLETE profile back to React
     res.status(200).json({
-      user: req.user,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        bio: user.bio,
+        profilePic: user.profilePic // React desperately needs this!
+      }
     });
   } catch (err) {
     console.error("ME ERROR:", err);

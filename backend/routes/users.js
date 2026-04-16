@@ -2,43 +2,50 @@ const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
 const authMiddleware = require("../middleware/authMiddleware");
+const upload = require("../middleware/uploadMiddleware");
 
-console.log("---> Profile routing file successfully loaded!");
 
 //PUT ROUTE: Update users profile
-router.put("/update", authMiddleware, async (req, res) => {
+router.put("/update", authMiddleware, upload.single("profilePic"), async (req, res) => {
   try {
-    const updates = { ...req.body };
+    // 1. Gather text fields from Multer's req.body
+    const updates = {
+      username: req.body.username,
+      bio: req.body.bio
+    };
 
-    const restrictedFields = ["password", "email", "passwordHash", "_id"];
-
-    restrictedFields.forEach((field) => delete updates[field]);
-
-    if (Object.keys(updates).length === 0) {
-      return res.status(400).json({ message: "No value fields to update" });
+    // 2. Add the image path if a file was uploaded
+    if (req.file) {
+      updates.profilePic = req.file.path;
     }
 
+    // 3. Username Conflict Check (Ignore yourself)
     if (updates?.username) {
-      const usernameTaken = await User.exists({ username: updates.username });
+      // Check if the username is taken by ANYONE ELSE
+      const usernameTaken = await User.findOne({
+        username: updates.username,
+        _id: { $ne: req.user.id } // This ignores your own record
+      });
+
       if (usernameTaken) {
         return res.status(400).json({ message: "Username already taken" });
       }
     }
 
-    //find user ID hidden inside their secure token
+    // 4. Update Database
     const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
-      updates,
-      { new: true },
-    );
+        req.user.id,
+        updates,
+        { returnDocument: 'after' }
+    ).select("-passwordHash");
 
-    if (!updatedUser)
-      return res.status(404).json({ message: "User not found" });
+    if (!updatedUser) return res.status(404).json({ message: "User not found" });
 
+    // 5. Return the clean object
     res.status(200).json(updatedUser);
   } catch (err) {
-    console.error("PROFILE UPDATE ERROR: ", err);
-    res.status(500).json({ message: "SERVER ERROR UPDATING PROFILE" });
+    console.error("UPDATE ERROR:", err);
+    res.status(500).json({ message: "Server error during update" });
   }
 });
 

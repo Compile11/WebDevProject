@@ -26,6 +26,10 @@ const userSchema = new Schema(
         default: "I am new member of Compile",
         maxLength: 200,
     },
+      profilePic:{
+        type: String,
+          default: ""
+      },
       resetPasswordToken: {
         type: String,
           default: null,

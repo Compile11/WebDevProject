@@ -7,199 +7,272 @@ import { Edit, Check } from "lucide-react";
 
 export default function ProfilePage() {
   const { currentUser, authLoading } = useAuth();
-  console.log(currentUser)
+
+
+  const [isEditing, setIsEditing] = useState(false);
+  const [usernameField, setUsernameField] = useState(currentUser?.username || "");
+  const [bioField, setBioField] = useState(currentUser?.bio || "");
+  const [message, setMessage] = useState("");
+
+  const [myPosts, setMyPosts] = useState([]);
+  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
+
+  // NEW: State to hold the selected image file
+  const [profilePicFile, setProfilePicFile] = useState(null);
+
+  useEffect(() => {
+    async function loadUserPosts() {
+      if (currentUser?.id) {
+        const result = await getPostsByUserId(currentUser.id);
+        if (result && result.data) {
+          setMyPosts(result.data);
+        }
+      }
+    }
+    setIsLoadingPosts(false);
+    loadUserPosts();
+  }, [currentUser]);
+
 
   if (authLoading) {
     return <div>Loading...</div>;
   }
 
-  // Security Bounce
   if (!currentUser) {
     return <Navigate to="/" />;
   }
 
-  // 1. Edit Profile State
-  const [isEditing, setIsEditing] = useState(false);
-  const [usernameField, setUsernameField] = useState(
-    currentUser?.username || "",
-  );
-  const [message, setMessage] = useState("");
-  const [bioField, setBioField] = useState(currentUser.bio || "");
-
-  // 2. NEW: Activity Feed State
-  const [myPosts, setMyPosts] = useState([]);
-  const [isLoadingPosts, setIsLoadingPosts] = useState(true);
-
-  // 3. NEW: Fetch and filter posts when the page loads
-  useEffect(() => {
-    async function loadUserPosts() {
-      const result = await getPostsByUserId(currentUser.id);
-      setMyPosts(result.data);
-    }
-    setIsLoadingPosts(false);
-    loadUserPosts();
-  }, [currentUser]);
-  const hasChanges = usernameField !== currentUser.username || bioField !== currentUser.bio;
+  const hasChanges = usernameField !== currentUser.username || bioField !== currentUser.bio || profilePicFile !== null;
 
   const handleSave = async () => {
-    if (!hasChanges) return;
+    try {
+      const token = localStorage.getItem('token');
+      const formData = new FormData();
 
-    let newUsername;
-    let newBio;
+      // Pack the current state values
+      formData.append('username', usernameField);
+      formData.append('bio', bioField);
 
-    if (usernameField !== currentUser.username) {
-      newUsername = usernameField;
+      if (profilePicFile) {
+        formData.append('profilePic', profilePicFile);
+      }
+
+      // FIXED URL: Change /users/ to /profile/
+      const response = await fetch('http://localhost:5000/api/profile/update', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData,
+      });
+
+      // We only try to parse JSON if the server actually found the route
+      if (response.ok) {
+        const updatedUser = await response.json();
+
+        // Save the fresh data to localStorage so it persists
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+
+        setMessage('Profile updated successfully!');
+        setIsEditing(false);
+        setProfilePicFile(null);
+
+        // Force reload to sync the AuthContext
+        window.location.reload();
+      } else {
+        // If it's a 404 or 400, try to get the error message without crashing
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+          const errorData = await response.json();
+          setMessage(`ERROR: ${errorData.message}`);
+        } else {
+          setMessage(`ERROR: Server returned ${response.status}. Check your backend routes.`);
+        }
+      }
+    } catch(err) {
+      setMessage("Update failed. Is the server running on port 5000?");
     }
-
-    if (newBio !== "") {
-      newBio = bioField;
-    }
-
-    const result = await updateUser({
-      username: newUsername || undefined,
-      bio: newBio || undefined,
-    });
-    if (result.error) {
-      setMessage(`ERROR: ${result.error}`);
-      console.log(result);
-      return;
-    }
-
-    setMessage("Profile updated successfully");
-    setIsEditing(false);
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] text-gray-200 px-2">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold text-white mb-8">Your Profile</h1>
+      <div className="min-h-[calc(100vh-64px)] text-gray-200 px-2">
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-3xl font-bold text-white mb-8 mt-8">Your Profile</h1>
 
-        {/* Display Status Messages */}
-        {message && (
-          <div className="p-3 mb-4 text-sm rounded bg-blue-900/50 text-blue-400 border border-blue-800">
-            {message}
-          </div>
-        )}
+          {/* Display Status Messages */}
+          {message && (
+              <div className={`p-3 mb-4 text-sm rounded border ${message.startsWith('ERROR') ? 'bg-red-900/50 text-red-400 border-red-800' : 'bg-blue-900/50 text-blue-400 border-blue-800'}`}>
+                {message}
+              </div>
+          )}
 
-        {/* Profile Identity Card */}
-        <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6 mb-8 flex items-center gap-6">
-          <div className="group relative w-24 h-24 cursor-pointer overflow-hidden rounded-full flex items-center justify-center text-4xl font-bold text-white shadow-inner">
-            <div className="absolute inset-0 bg-blue-600 transition-opacity group-hover:opacity-30" />
+          {/* Profile Identity Card */}
+          <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6 mb-8 flex items-center gap-6">
 
-            <span className="relative z-10 transition-all group-hover:opacity-30">
-              {currentUser.username.charAt(0).toUpperCase()}
-            </span>
+            {/* THE CLICKABLE AVATAR LOGIC (HANDLES BOTH CASES) */}
+            <div className="shrink-0 w-24 h-24 sm:w-32 sm:h-32">
+              {isEditing ? (
+                  // --- CASE 2: ALREADY EDITING ---
+                  // Clicking here now triggers the HIDDEN file input to change the picture
+                  <label className="group relative w-full h-full cursor-pointer overflow-hidden rounded-full flex items-center justify-center text-5xl font-bold text-white shadow-inner block">
 
-            <div
-              className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-10"
-              onClick={() => {
-                if (isEditing && hasChanges) {
-                  handleSave();
-                } else {
-                  setIsEditing(true);
-                }
-              }}
-            >
-              {isEditing && hasChanges ? (
-                <Check className="w-10 h-10 text-green-400" />
+                    {/* Live Preview / Current PFP / Default Circle */}
+                    {profilePicFile ? (
+                        <img src={URL.createObjectURL(profilePicFile)} alt="Preview" className="w-full h-full object-cover border-4 border-blue-500 rounded-full" />
+                    ) : currentUser?.profilePic ? (
+                        <img src={currentUser.profilePic} alt="Profile" className="w-full h-full object-cover border-4 border-transparent group-hover:border-blue-500 transition-all rounded-full" />
+                    ) : (
+                        <div className="absolute inset-0 bg-blue-600 flex items-center justify-center border-4 border-transparent group-hover:border-blue-500 transition-all">
+                          {usernameField.charAt(0).toUpperCase()}
+                        </div>
+                    )}
+
+                    {/* Hover Overlay (Signals Image Change) */}
+                    <div className="absolute inset-0 bg-black/60 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Edit className="w-6 h-6 text-white mb-1" />
+                      <span className="text-white text-xs font-bold">CHANGE PHOTO</span>
+                    </div>
+
+                    {/* Hidden Input (only activated in Edit Mode) */}
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => setProfilePicFile(e.target.files[0])}
+                        className="hidden"
+                    />
+                  </label>
               ) : (
-                <Edit className="w-6 h-6" />
+                  // --- CASE 1: VIEW MODE ---
+                  // Clicking the entire circle here turns on Edit Mode for bio/username
+                  <div
+                      onClick={() => setIsEditing(true)}
+                      className="group relative w-full h-full cursor-pointer overflow-hidden rounded-full flex items-center justify-center text-5xl font-bold text-white shadow-inner block border-2 border-transparent hover:border-blue-500 transition-all"
+                  >
+                    {currentUser?.profilePic ? (
+                        <img src={currentUser.profilePic} alt="Profile" className="w-full h-full object-cover shadow-inner" />
+                    ) : (
+                        <div className="absolute inset-0 bg-blue-600 flex items-center justify-center">
+                          {currentUser?.username.charAt(0).toUpperCase()}
+                        </div>
+                    )}
+
+                    {/* Hover Overlay (Signals Edit Mode) */}
+                    <div className="absolute inset-0 bg-black/50 rounded-full flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Edit className="w-8 h-8 text-white mb-1" />
+                      <span className="text-white text-xs font-bold">EDIT PROFILE</span>
+                    </div>
+                  </div>
+              )}
+            </div>
+
+            <div className="flex-1">
+              {isEditing ? (
+                  <div className="flex flex-col gap-2 max-w-md">
+                    <input
+                        type="text"
+                        value={usernameField}
+                        onChange={(e) => setUsernameField(e.target.value)}
+                        className="p-2 bg-gray-900 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold"
+                    />
+                    <textarea
+                        value={bioField}
+                        onChange={(e) => setBioField(e.target.value)}
+                        placeholder="Tell the community about yourself..."
+                        className="p-2 bg-gray-900 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none h-20"
+                        maxLength={200}
+                    />
+                    <div className="flex gap-2 mt-2">
+                      <button onClick={handleSave} className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-1.5 px-4 rounded transition flex items-center justify-center gap-1 text-sm">
+                        <Check className="w-4 h-4" /> Save Changes
+                      </button>
+                      <button
+                          onClick={() => {
+                            setIsEditing(false);
+                            setProfilePicFile(null);
+                            setUsernameField(currentUser?.username || "");
+                            setBioField(currentUser?.bio || "");
+                          }}
+                          className="flex-1 bg-gray-600 hover:bg-gray-500 text-white font-bold py-1.5 px-4 rounded transition text-sm"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+              ) : (
+                  <div>
+                    {/* No extra buttons here now, clicking the circle handles it */}
+                    <h2 className="text-2xl font-bold text-white mb-1">
+                      {usernameField}
+                    </h2>
+                    <p className="text-gray-400 mb-4">{currentUser.email}</p>
+                    <p className="text-gray-300 text-sm italic border-l-2 border-blue-500 pl-3">
+                      {bioField || "Click your profile picture above to add a bio!"}
+                    </p>
+                    <span className="inline-block mt-4 bg-gray-700 text-xs font-semibold px-3 py-1 rounded-full text-gray-300">
+                  Compile Member
+                </span>
+                  </div>
               )}
             </div>
           </div>
 
-          <div className="flex-1">
-            {isEditing ? (
-              <div className="flex flex-col gap-2 max-w-md">
-                <input
-                  type="text"
-                  value={usernameField}
-                  onChange={(e) => setUsernameField(e.target.value)}
-                  className="p-2 bg-gray-900 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-bold"
-                />
-                <textarea
-                  value={bioField}
-                  onChange={(e) => setBioField(e.target.value)}
-                  placeholder="Tell the community about yourself..."
-                  className="p-2 bg-gray-900 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm resize-none h-20"
-                  maxLength={200}
-                />
-              </div>
-            ) : (
-              <div>
-                {/* We now display the React state directly! */}
-                <h2 className="text-2xl font-bold text-white">
-                  {usernameField}
-                </h2>
-                <p className="text-gray-400 mt-1">{currentUser.email}</p>
-                <p className="text-gray-300 mt-3 text-sm italic border-l-2 border-blue-500 pl-3">
-                  {bioField ||
-                    "No bio added yet. Click Edit Profile to add one!"}
-                </p>
-              </div>
-            )}
-
-            <p className="text-gray-400 mt-1">{currentUser.email}</p>
-            <span className="inline-block mt-3 bg-gray-700 text-xs font-semibold px-3 py-1 rounded-full text-gray-300">
-              Compile Member
-            </span>
-          </div>
-        </div>
-        {/* NEW: User Activity Feed */}
-        <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-semibold text-white">
-              Your Recent Posts
-            </h3>
-            <span className="bg-blue-900 text-blue-300 text-xs font-bold px-3 py-1 rounded-full">
+          {/* RESTORED: User Activity Feed */}
+          <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6 mb-12">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-semibold text-white">
+                Your Recent Posts
+              </h3>
+              <span className="bg-blue-900 text-blue-300 text-xs font-bold px-3 py-1 rounded-full">
               {myPosts.length} Posts
             </span>
-          </div>
+            </div>
 
-          <div className="space-y-4">
-            {isLoadingPosts ? (
-              <p className="text-gray-400 text-sm">Loading activity...</p>
-            ) : myPosts.length === 0 ? (
-              <p className="text-gray-500 text-sm italic">
-                You haven't created any posts yet.
-              </p>
-            ) : (
-              myPosts.map((post) => (
-                <div
-                  key={post._id}
-                  className="bg-gray-900 p-4 rounded-md border border-gray-700 hover:border-gray-500 transition"
-                >
-                  <h4 className="text-lg font-bold text-blue-400">
-                    {post.title}
-                  </h4>
-                  <p className="text-gray-300 text-sm mt-2 line-clamp-2">
-                    {post.body}
+            <div className="space-y-4">
+              {isLoadingPosts ? (
+                  <p className="text-gray-400 text-sm">Loading activity...</p>
+              ) : myPosts.length === 0 ? (
+                  <p className="text-gray-500 text-sm italic">
+                    You haven't created any posts yet.
                   </p>
-                  <span className="text-gray-300 text-xs">
-                    {new Date(post.createdAt).toLocaleString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      year: "numeric",
-                      hour: "numeric",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                  <div className="mt-3 flex gap-2">
-                    {post.tags?.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded"
+              ) : (
+                  myPosts.map((post) => (
+                      <div
+                          key={post._id}
+                          className="bg-gray-900 p-4 rounded-md border border-gray-700 hover:border-gray-500 transition"
                       >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))
-            )}
+                        <h4 className="text-lg font-bold text-blue-400">
+                          {post.title}
+                        </h4>
+                        <p className="text-gray-300 text-sm mt-2 line-clamp-2">
+                          {post.body}
+                        </p>
+                        <div className="flex items-center justify-between mt-3">
+                    <span className="text-gray-400 text-xs">
+                      {new Date(post.createdAt).toLocaleString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                          <div className="flex gap-2">
+                            {post.tags?.map((tag) => (
+                                <span
+                                    key={tag}
+                                    className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded"
+                                >
+                          #{tag}
+                        </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                  ))
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
   );
 }
