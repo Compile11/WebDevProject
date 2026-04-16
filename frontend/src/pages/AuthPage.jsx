@@ -2,9 +2,11 @@ import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import LoginSignup from "../components/auth/LoginSignup";
 import ForgotPassword from "../components/auth/ForgotPassword";
+import { useNavigate } from "react-router-dom";
 
 export default function AuthPage() {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const navigate = useNavigate()
 
   return (
     <div className="relative flex flex-row h-screen w-screen">

@@ -9,10 +9,15 @@ const upload = require("../middleware/uploadMiddleware");
 router.put("/update", authMiddleware, upload.single("profilePic"), async (req, res) => {
   try {
     // 1. Gather text fields from Multer's req.body
-    const updates = {
-      username: req.body.username,
-      bio: req.body.bio
-    };
+    const updates = {};
+
+    if (req.body.username !== undefined) {
+      updates.username = req.body.username;
+    }
+
+    if (req.body.bio != undefined) {
+      updates.bio = req.body.bio
+    }
 
     // 2. Add the image path if a file was uploaded
     if (req.file) {
@@ -20,7 +25,7 @@ router.put("/update", authMiddleware, upload.single("profilePic"), async (req, r
     }
 
     // 3. Username Conflict Check (Ignore yourself)
-    if (updates?.username) {
+    if (updates.username) {
       // Check if the username is taken by ANYONE ELSE
       const usernameTaken = await User.findOne({
         username: updates.username,

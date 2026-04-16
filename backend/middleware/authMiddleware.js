@@ -27,7 +27,8 @@ async function authMiddleware(req, res, next) {
       id: user._id,
       username: user.username,
       email: user.email,
-      bio: user?.bio
+      bio: user?.bio,
+      profilePic: user?.profilePic,
     };
 
     next();

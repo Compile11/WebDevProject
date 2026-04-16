@@ -1,13 +1,18 @@
 import { apiClient } from "./client";
 
-export async function updateUser({ username, bio }) {
-  const updates = {};
-
-  if (username !== undefined) updates.username = username;
-  if (bio !== undefined) updates.bio = bio;
-
+export async function updateUser({ username, bio, profilePic }) {
   try {
-    const response = await apiClient.put("/api/profile/update", updates);
+    const formData = new FormData();
+
+    if (username !== undefined) formData.append("username", username);
+    if (bio !== undefined) formData.append("bio", bio);
+    if (profilePic !== undefined) formData.append("profilePic", profilePic);
+
+    const response = await apiClient.put("/api/profile/update", formData, {
+      headers: {
+        "Content-Type": "mutipart/form-data",
+      },
+    });
 
     return {
       data: response.data,
