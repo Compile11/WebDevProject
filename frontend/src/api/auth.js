@@ -35,3 +35,21 @@ export async function getCurrentUser() {
     throw err.response?.data || { message: "Failed to fetch current user" }
   }
 }
+
+export async function resetPasswordEmail(email) {
+  try {
+    const response = await apiClient.post("/api/users/reset-password", {
+      email
+    })
+
+    return {
+      data: response.data,
+      error: null
+    }
+  } catch (err) {
+    return {
+      data: null,
+      error: err.response?.data || { message: "Failed to send reset password email" }
+    }
+  }
+}
