@@ -5,8 +5,10 @@ import { useAuth } from "../../context/AuthContext";
 export default function AccountButton() {
   const { currentUser, logout, authLoading } = useAuth();
 
+  const hasProfilePic = !!currentUser?.profilePic
+
   if (authLoading) {
-    return <Loader className="animate-spin" />
+    return <Loader className="animate-spin" />;
   }
 
   return (
@@ -22,9 +24,13 @@ export default function AccountButton() {
         <>
           <Link
             to={`/account/`}
-            className="flex flex-row items-center bg-gray-200 dark:bg-gray-700 rounded-full p-2 dark:hover:bg-gray-600 transition-all"
+            className={`flex flex-row items-center bg-gray-200 dark:bg-gray-700 rounded-full ${hasProfilePic ? "p-1" : "p-2"} dark:hover:bg-gray-600 transition-all`}
           >
-            <CircleUser />
+            {hasProfilePic ? (
+              <img src={currentUser?.profilePic} className="w-8 h-8 rounded-full object-cover border border-1 border-gray-800" alt="ProfilePic"/>
+            ) : (
+              <CircleUser />
+            )}
             <span className="max-w-0 group-hover:max-w-[150px] group-hover:pl-2 overflow-hidden whitespace-nowrap transition-all duration-300">
               {currentUser.username}
             </span>
