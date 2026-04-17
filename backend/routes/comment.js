@@ -1,6 +1,7 @@
 const express = require("express");
 const Comment = require("../models/Comment");
 const authMiddleware = require("../middleware/authMiddleware");
+const {getToxicityScore} = require("../utils/moderator");
 
 const router = express.Router({ mergeParams: true });
 
@@ -33,6 +34,12 @@ router.post("/", authMiddleware, async (req, res) => {
 
     if (!text || !text.trim()) {
       return res.status(400).json({ message: "text is required" })
+    }
+    //AI MODERATION GATEKEEPER
+    const scores = await getToxicityScore(text);
+
+    if(scores&&scores.toxicity > 0.8){
+      return res.status(400).json({ message: "AI MODERATION: COMMENT FLAGGED FOR HIGH TOXICITY" })
     }
 
     const newComment = new Comment({
