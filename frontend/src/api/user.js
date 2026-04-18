@@ -6,13 +6,9 @@ export async function updateUser({ username, bio, profilePic }) {
 
     if (username !== undefined) formData.append("username", username);
     if (bio !== undefined) formData.append("bio", bio);
-    if (profilePic !== undefined) formData.append("profilePic", profilePic);
+    if (profilePic) formData.append("profilePic", profilePic);
 
-    const response = await apiClient.put("/api/profile/update", formData, {
-      headers: {
-        "Content-Type": "mutipart/form-data",
-      },
-    });
+    const response = await apiClient.put("/api/profile/update", formData);
 
     return {
       data: response.data,

@@ -213,4 +213,18 @@ router.get("/me", authMiddleware, async (req, res) => {
   }
 });
 
+router.get("/verify/:token", async (req, res) => {
+  try{
+    const user = await User.findOne({verificationToken: req.params.token});
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    await user.save();
+
+    res.send("Email has been verified");
+  }catch(err){
+    res.status(500).send("Server error during verification");
+  }
+})
+
 module.exports = router;

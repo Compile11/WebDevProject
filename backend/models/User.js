@@ -37,7 +37,9 @@ const userSchema = new Schema(
       resetPasswordExpires: {
         type: Date,
           default: null,
-      }
+      },
+      isVerified: {type: Boolean, default: false},
+      verificationToken: String,
   },
   { timestamps: true },
 );
