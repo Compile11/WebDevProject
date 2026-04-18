@@ -58,4 +58,46 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
+router.put("/:commentId/like", authMiddleware, async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+    if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+    const userId = req.user.id;
+
+    if (comment.likes.includes(userId)) {
+      comment.likes = comment.likes.filter((id) => id.toString() !== userId);
+    } else {
+      comment.likes.push(userId);
+      comment.dislikes = comment.dislikes.filter((id) => id.toString() !== userId);
+    }
+
+    await comment.save();
+    res.status(200).json({ likes: comment.likes, dislikes: comment.dislikes });
+  } catch (err) {
+    res.status(500).json({ message: "Error toggling comment like" });
+  }
+});
+
+router.put("/:commentId/dislike", authMiddleware, async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId);
+    if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+    const userId = req.user.id;
+
+    if (comment.dislikes.includes(userId)) {
+      comment.dislikes = comment.dislikes.filter((id) => id.toString() !== userId);
+    } else {
+      comment.dislikes.push(userId);
+      comment.likes = comment.likes.filter((id) => id.toString() !== userId);
+    }
+
+    await comment.save();
+    res.status(200).json({ likes: comment.likes, dislikes: comment.dislikes });
+  } catch (err) {
+    res.status(500).json({ message: "Error toggling comment dislike" });
+  }
+});
+
 module.exports = router;

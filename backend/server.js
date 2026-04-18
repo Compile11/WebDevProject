@@ -21,6 +21,7 @@ app.use(express.json());
 app.use("/api/users", authRoutes);
 app.use("/api/posts/:postId/comments", commentRoutes);
 app.use("/api/profile", require("./routes/users"));
+app.use("/api/comments", commentRoutes);
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -83,7 +84,41 @@ app.post("/api/posts", authMiddleware, async (req, res) => {
   }
 });
 
-// (Deleted the rogue createNewUser line)
+app.put("/api/posts/:id/like", authMiddleware, async (req, res) => {
+  try{
+    const post = await Post.findById(req.params.id);
+    const userId = req.user.id;
+
+    if(post.likes.includes(userId)){
+      post.likes = post.likes.filter((id)=>id.toString()!==userId);
+    }else{
+      post.likes.push(userId);
+      post.dislikes = post.dislikes.filter((id)=>id.toString()!==userId);
+    }
+
+    await post.save();
+    res.status(200).json({likes: post.likes, dislikes: post.dislikes});
+  }catch(err){
+    res.status(500).json({ message: "Error toggling like" });
+  }
+});
+app.put("/api/posts/:id/dislikes", authMiddleware, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    const userId = req.user.id;
+
+    if (post.dislikes.includes(userId)) {
+      post.dislikes = post.dislikes.filter((id) => id.toString() !== userId);
+    } else {
+      post.dislikes.push(userId);
+      post.likes = post.likes.filter((id) => id.toString() !== userId);
+    }
+    await post.save();
+    res.status(200).json({likes: post.likes, dislikes: post.dislikes});
+  }catch(err){
+    res.status(500).json({ message: "Error toggling dislike" });
+  }
+})
 
 const PORT = process.env.PORT || 5000;
 

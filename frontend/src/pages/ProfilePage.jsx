@@ -4,6 +4,7 @@ import { Navigate } from "react-router-dom";
 import { getPostsByUserId } from "../api/posts";
 import { updateUser } from "../api/user";
 import { Edit, Check, BadgeCheck } from "lucide-react";
+import PostCard from "../components/PostCard";
 
 export default function ProfilePage() {
   const { currentUser, setCurrentUser, authLoading } = useAuth();
@@ -67,6 +68,7 @@ export default function ProfilePage() {
         <div className="max-w-3xl mx-auto">
           <h1 className="text-3xl font-bold text-white mb-8 mt-8">Your Profile</h1>
 
+          {/* Display Status Messages */}
           {message && (
               <div className={`p-3 mb-4 text-sm rounded border ${message.startsWith("ERROR") ? "bg-red-900/50 text-red-400 border-red-800" : "bg-blue-900/50 text-blue-400 border-blue-800"}`}>
                 {message}
@@ -112,7 +114,7 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* INFO SECTION - Balanced correctly outside the avatar ternary */}
+            {/* INFO SECTION */}
             <div className="flex-1">
               {isEditing ? (
                   <div className="flex flex-col gap-2 max-w-md">
@@ -150,11 +152,9 @@ export default function ProfilePage() {
               ) : myPosts.length === 0 ? (
                   <p className="text-gray-500 text-sm italic">No posts yet.</p>
               ) : (
+                  /* THE CHANGED MAPPING LOGIC */
                   myPosts.map((post) => (
-                      <div key={post._id} className="bg-gray-900 p-4 rounded-md border border-gray-700 hover:border-gray-500 transition">
-                        <h4 className="text-lg font-bold text-blue-400">{post.title}</h4>
-                        <p className="text-gray-300 text-sm mt-2 line-clamp-2">{post.body}</p>
-                      </div>
+                      <PostCard key={post._id} post={post} />
                   ))
               )}
             </div>
