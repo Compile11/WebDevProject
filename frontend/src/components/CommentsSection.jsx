@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { getComments, createComment } from "../api/comments";
+import Markdown from "react-markdown";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark as dark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export default function CommentsSection({ postId }) {
   // 1. All hooks must live right here at the top of the component
@@ -79,7 +82,67 @@ export default function CommentsSection({ postId }) {
               <span className="text-gray-500 text-xs">
                 {new Date(comment.createdAt).toLocaleDateString()}
               </span>
-              <p className="text-gray-300 mt-1 text-sm">{comment.text}</p>
+              <div className="text-gray-300 mt-1 text-sm">
+                <Markdown
+                  components={{
+                    code(props) {
+                      const {children, inline, className, ...rest} = props
+                      const isLangBlock = className && className.startsWith('language-');
+                      const language = isLangBlock ? className.replace('language-', '') : '';
+
+                      // return if ```{language}
+                      if(!inline && isLangBlock) {
+                        return (
+                          <div className="relative my-3 rounded-md overflow-hidden border border-gray-700">
+                          <div className="flex justify-between items-center bg-gray-900 px-3 py-1 text-[10px] text-white-700 font-mono border-b border-gray-700">
+                            <span className="text-[12px]">{language}</span>
+                            <button 
+                              type="button"
+                              onClick={() => navigator.clipboard.writeText(String(children))}
+                              className="hover:text-white transition-colors border rounded-full px-1 py-0.5"
+                            >
+                              Copy
+                            </button>
+                          </div>
+                          <SyntaxHighlighter
+                            {...rest}
+                              PreTag="div"
+                              language={language}
+                              style={dark}
+                              customStyle={{
+                                margin: 0,
+                                padding: '1rem',
+                                fontSize: '13px',
+                                lineHeight: '1.5',
+                                overflowX: 'auto',
+                                backgroundColor: 'transparent'
+                              }}
+                              codeTagProps={{
+                                className: "!whitespace-pre !block",
+                                style: {
+                                  backgroundColor: 'transparent',
+                                  whiteSpace: 'pre'
+                                }
+                              }}
+                          >
+                            {String(children).trimEnd()}
+                          </SyntaxHighlighter>
+                          </div>
+                        );
+                      }
+                      
+                      // Return the rest normally
+                      return (
+                        <code {...rest} className={className}>
+                          {children}
+                        </code>
+                      );
+                    }
+                  }}
+                >
+                  {comment.text}
+                </Markdown>
+              </div>
             </div>
           ))
         )}
