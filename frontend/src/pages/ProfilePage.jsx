@@ -65,9 +65,7 @@ export default function ProfilePage() {
 
   return (
       <div className="min-h-[calc(100vh-64px)] text-gray-200 px-2 pb-20">
-        <div className="max-w-3xl mx-auto">
-          <h1 className="text-3xl font-bold text-white mb-8 mt-8">Your Profile</h1>
-
+        <div className="max-w-3xl mx-auto mt-8">
           {/* Display Status Messages */}
           {message && (
               <div className={`p-3 mb-4 text-sm rounded border ${message.startsWith("ERROR") ? "bg-red-900/50 text-red-400 border-red-800" : "bg-blue-900/50 text-blue-400 border-blue-800"}`}>

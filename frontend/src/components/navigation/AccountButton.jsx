@@ -23,7 +23,7 @@ export default function AccountButton() {
       ) : (
         <>
           <Link
-            to={`/account/`}
+            to={`/account`}
             className={`flex flex-row items-center bg-gray-200 dark:bg-gray-700 rounded-full ${hasProfilePic ? "p-1" : "p-2"} dark:hover:bg-gray-600 transition-all`}
           >
             {hasProfilePic ? (

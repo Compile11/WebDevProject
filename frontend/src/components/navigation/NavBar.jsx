@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { HomeIcon, PlusIcon } from "lucide-react";
 import AccountButton from "./AccountButton";
 
-export const NavBar = () => {
+export const NavBar = ({ title }) => {
   return (
     <div className="w-full h-[60px]">
       <div className="mx-[200px] h-full flex items-center justify-between text-white">
@@ -24,6 +24,10 @@ export const NavBar = () => {
               </span>
             </Link>
           ))}
+        </div>
+
+        <div className="absolute left-1/2 -translate-x-1/2 text-3xl font-semibold pointer-events-none">
+          {title}
         </div>
         <AccountButton />
       </div>

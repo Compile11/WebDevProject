@@ -32,9 +32,44 @@ app.get("/", (_req, res) => {
   res.send("Backend is running");
 });
 
-app.get("/api/posts", async (_req, res) => {
+app.get("/api/posts", async (req, res) => {
   try {
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || 10, 1), 50);
+    const skip = (page - 1) * limit;
+
+    const totalPosts = await Post.countDocuments();
+
     const posts = await Post.find()
+      .populate("userId", "username email profilePic")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    res.status(200).json({
+      posts,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalPosts / limit),
+        totalPosts,
+        hasNextPage: page * limit < totalPosts,
+        hasPrevPage: page > 1,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ message: "CANNOT FETCH POSTS", err });
+  }
+});
+
+app.get("/api/users/:userId/posts", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({ message: "userId is required" });
+    }
+
+    const posts = await Post.find({ userId })
       .populate("userId", "username email")
       .sort({ createdAt: -1 });
 
@@ -44,19 +79,23 @@ app.get("/api/posts", async (_req, res) => {
   }
 });
 
-app.get("/api/posts/:userId", async (req, res) => {
+app.get("/api/posts/:postId", async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { postId } = req.params;
 
-    if (!userId) {
-      return res.status(400).json({ message: "userId is required" });
+    const post = await Post.findById(postId).populate(
+      "userId",
+      "username email profilePic",
+    );
+
+
+    if (!post) {
+      return res.status(404).json({ message: "post not found" });
     }
 
-    const posts = await Post.find({ userId }).populate("userId", "username email").sort({ createdAt: -1 });
-
-    res.status(200).json(posts);
+    res.status(200).json(post);
   } catch (err) {
-    res.status(500).json({ message: "CANNOT FETCH POSTS", err });
+    res.status(500).json({ message: "Cannot fetch post:", error: err.message });
   }
 });
 
@@ -85,20 +124,20 @@ app.post("/api/posts", authMiddleware, async (req, res) => {
 });
 
 app.put("/api/posts/:id/like", authMiddleware, async (req, res) => {
-  try{
+  try {
     const post = await Post.findById(req.params.id);
     const userId = req.user.id;
 
-    if(post.likes.includes(userId)){
-      post.likes = post.likes.filter((id)=>id.toString()!==userId);
-    }else{
+    if (post.likes.includes(userId)) {
+      post.likes = post.likes.filter((id) => id.toString() !== userId);
+    } else {
       post.likes.push(userId);
-      post.dislikes = post.dislikes.filter((id)=>id.toString()!==userId);
+      post.dislikes = post.dislikes.filter((id) => id.toString() !== userId);
     }
 
     await post.save();
-    res.status(200).json({likes: post.likes, dislikes: post.dislikes});
-  }catch(err){
+    res.status(200).json({ likes: post.likes, dislikes: post.dislikes });
+  } catch (err) {
     res.status(500).json({ message: "Error toggling like" });
   }
 });
@@ -114,11 +153,11 @@ app.put("/api/posts/:id/dislikes", authMiddleware, async (req, res) => {
       post.likes = post.likes.filter((id) => id.toString() !== userId);
     }
     await post.save();
-    res.status(200).json({likes: post.likes, dislikes: post.dislikes});
-  }catch(err){
+    res.status(200).json({ likes: post.likes, dislikes: post.dislikes });
+  } catch (err) {
     res.status(500).json({ message: "Error toggling dislike" });
   }
-})
+});
 
 const PORT = process.env.PORT || 5000;
 

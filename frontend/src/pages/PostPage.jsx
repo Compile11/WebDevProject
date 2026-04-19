@@ -56,8 +56,6 @@ export default function PostPage() {
 
   return (
     <div className="mx-[200px] pt-6">
-      <h1 className="text-2xl font-bold mb-4">Create Post</h1>
-
       {error && (
         <div className="mb-4 rounded bg-red-100 px-3 py-2 text-red-700">
           {error}
