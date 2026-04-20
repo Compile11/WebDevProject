@@ -126,13 +126,20 @@ app.post("/api/posts", authMiddleware, async (req, res) => {
 app.put("/api/posts/:id/like", authMiddleware, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    const userId = req.user.id;
 
-    if (post.likes.includes(userId)) {
-      post.likes = post.likes.filter((id) => id.toString() !== userId);
+    // 1. Force the userId to be a String right away to prevent comparison bugs
+    const userIdStr = req.user.id.toString();
+
+    // 2. Safely check if the user is in the array
+    const hasLiked = post.likes.some((id) => id.toString() === userIdStr);
+
+    if (hasLiked) {
+      // UNLIKE: Remove the user
+      post.likes = post.likes.filter((id) => id.toString() !== userIdStr);
     } else {
-      post.likes.push(userId);
-      post.dislikes = post.dislikes.filter((id) => id.toString() !== userId);
+      // LIKE: Add user and remove from dislikes
+      post.likes.push(userIdStr);
+      post.dislikes = post.dislikes.filter((id) => id.toString() !== userIdStr);
     }
 
     await post.save();
@@ -141,17 +148,27 @@ app.put("/api/posts/:id/like", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Error toggling like" });
   }
 });
-app.put("/api/posts/:id/dislikes", authMiddleware, async (req, res) => {
+
+// TOGGLE DISLIKE (Changed to singular "/dislike" and ".put" to match the frontend)
+app.put("/api/posts/:id/dislike", authMiddleware, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    const userId = req.user.id;
 
-    if (post.dislikes.includes(userId)) {
-      post.dislikes = post.dislikes.filter((id) => id.toString() !== userId);
+    // Force the userId to be a String
+    const userIdStr = req.user.id.toString();
+
+    // Safely check if the user is in the array
+    const hasDisliked = post.dislikes.some((id) => id.toString() === userIdStr);
+
+    if (hasDisliked) {
+      // UNDISLIKE: Remove the user
+      post.dislikes = post.dislikes.filter((id) => id.toString() !== userIdStr);
     } else {
-      post.dislikes.push(userId);
-      post.likes = post.likes.filter((id) => id.toString() !== userId);
+      // DISLIKE: Add user and remove from likes
+      post.dislikes.push(userIdStr);
+      post.likes = post.likes.filter((id) => id.toString() !== userIdStr);
     }
+
     await post.save();
     res.status(200).json({ likes: post.likes, dislikes: post.dislikes });
   } catch (err) {
