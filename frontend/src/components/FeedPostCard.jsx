@@ -1,47 +1,114 @@
+import { useState } from "react";
 import { formatTime } from "../utils/formatTime";
-import {Link, useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { MessageSquare, ThumbsUp, ThumbsDown } from "lucide-react";
+import { togglePostLike, togglePostDislike } from "../api/votes";
+import { useAuth } from "../context/AuthContext";
 
 export default function FeedPostCard({ post }) {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
 
-  const handleUserClick = (e) =>{
+  // 1. Local state to handle real-time vote updates
+  const [likes, setLikes] = useState(post.likes || []);
+  const [dislikes, setDislikes] = useState(post.dislikes || []);
+
+  const hasLiked = likes.some(id => id.toString() === currentUser?.id);
+  const hasDisliked = dislikes.some(id => id.toString() === currentUser?.id);
+
+  // 2. The Vote Handler
+  const handleVote = async (e, type) => {
+    e.preventDefault();
+    e.stopPropagation(); // <-- This stops the click from opening the post!
+
+    if (!currentUser) return alert("Please log in to vote!");
+
+    try {
+      const apiCall = type === "like" ? togglePostLike : togglePostDislike;
+      const { data } = await apiCall(post._id);
+      setLikes(data.likes);
+      setDislikes(data.dislikes);
+    } catch (err) {
+      console.error("Voting failed:", err);
+    }
+  };
+
+  const handleUserClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
     navigate(`/user/${post.userId?._id}`);
   };
+
   return (
       <div
           onClick={() => navigate(`/p/${post._id}`)}
-          className="relative w-full bg-gray-200 dark:bg-gray-700 rounded-lg p-4 my-2 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all cursor-pointer border border-transparent hover:border-gray-300 dark:hover:border-gray-600"
+          className="w-full bg-[#222428] hover:bg-[#2a2d32] rounded-lg p-4 shadow-sm transition-colors cursor-pointer border border-gray-800 hover:border-gray-600 flex flex-col gap-3"
       >
-        {/* AVATAR & USERNAME (Now Clickable!) */}
-        <div
-            onClick={handleUserClick}
-            className="flex items-center gap-2 hover:opacity-70 transition-opacity z-10 relative w-fit"
-        >
-          {post.userId?.profilePic ? (
-              <img src={post.userId.profilePic} alt="" className="w-8 h-8 rounded-full object-cover" />
-          ) : (
-              <div className="w-8 h-8 rounded-full bg-gray-400 dark:bg-gray-600 flex items-center justify-center text-xs font-semibold text-white">
-                {post.userId?.username?.[0]?.toUpperCase() || "U"}
+        {/* HEADER: Avatar, Username, Time */}
+        <div className="flex items-center gap-3">
+          <div onClick={handleUserClick} className="shrink-0 z-10 hover:opacity-80 transition-opacity">
+            {post.userId?.profilePic ? (
+                <img src={post.userId.profilePic} alt="" className="w-10 h-10 rounded-full object-cover border border-gray-600" />
+            ) : (
+                <div className="w-10 h-10 rounded-full bg-blue-900/50 border border-blue-500 flex items-center justify-center text-sm font-bold text-blue-400">
+                  {post.userId?.username?.[0]?.toUpperCase() || "U"}
+                </div>
+            )}
+          </div>
+
+          <div className="flex flex-col">
+            <h2 className="text-base font-semibold text-gray-100 hover:text-blue-400 transition-colors line-clamp-1">
+              {post.title}
+            </h2>
+            <div className="flex items-center gap-2 text-xs text-gray-400">
+            <span onClick={handleUserClick} className="hover:underline z-10">
+              {post.userId?.username || "Unknown Student"}
+            </span>
+              <span>•</span>
+              <span>{formatTime(post.createdAt)}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* BODY SNIPPET */}
+        <p className="text-sm text-gray-300 line-clamp-2 ml-13">
+          {post.body}
+        </p>
+
+        {/* FOOTER: Stats & Votes */}
+        <div className="flex items-center gap-4 ml-13 mt-1 text-xs font-medium text-gray-500">
+
+          {/* THUMBS UP */}
+          <div
+              onClick={(e) => handleVote(e, "like")}
+              className={`flex items-center gap-1.5 transition hover:text-gray-200 ${hasLiked ? "text-blue-500" : ""}`}
+          >
+            <ThumbsUp size={14} fill={hasLiked ? "currentColor" : "none"} />
+            <span>{likes.length}</span>
+          </div>
+
+          {/* THUMBS DOWN */}
+          <div
+              onClick={(e) => handleVote(e, "dislike")}
+              className={`flex items-center gap-1.5 transition hover:text-gray-200 ${hasDisliked ? "text-red-500" : ""}`}
+          >
+            <ThumbsDown size={14} fill={hasDisliked ? "currentColor" : "none"} />
+            <span>{dislikes.length}</span>
+          </div>
+
+          <div className="flex items-center gap-1.5 hover:text-blue-400 transition-colors">
+            <MessageSquare size={14} />
+            <span>Reply</span>
+          </div>
+
+          {/* FIXED: The duplicate key error is solved by adding the index to the key */}
+          {post.tags && post.tags.length > 0 && (
+              <div className="ml-auto flex gap-2">
+                {post.tags.slice(0, 2).map((tag, index) => (
+                    <span key={`${tag}-${index}`} className="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded">#{tag}</span>
+                ))}
               </div>
           )}
-          <span className="text-sm font-medium text-gray-800 dark:text-gray-100 hover:underline">
-          {post.userId?.username || "Unknown"}
-        </span>
-        </div>
-
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center text-center pointer-events-none max-w-[60%]">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-white truncate w-full">
-            {post.title}
-          </h2>
-          <p className="text-xs text-gray-700 dark:text-gray-300 line-clamp-1 w-full">
-            {post.body}
-          </p>
-        </div>
-
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500 dark:text-gray-400">
-          {formatTime(post.createdAt)}
         </div>
       </div>
   );
