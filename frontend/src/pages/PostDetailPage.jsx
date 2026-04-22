@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getPostById } from "../api/posts";
 import CommentsSection from "../components/CommentsSection";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
@@ -78,7 +78,9 @@ export default function PostDetailPage({ setTitle }) {
                       {post.userId?.username?.[0]?.toUpperCase() || "U"}
                     </div>
                 )}
-                <span className="text-blue-400 font-bold text-lg">{post.userId?.username || "Unknown Student"}</span>
+                <Link to={`/${post.userId?._id?.toString() === currentUser?.id?.toString() ? "account" : `u/${post.userId?._id}`}`}>
+                  <span className="text-blue-400 font-bold text-lg hover:text-blue-300">{post.userId?.username || "Unknown Student"}</span>
+                </Link>
               </div>
 
               {/* Center: Title & Tags */}

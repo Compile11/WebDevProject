@@ -9,6 +9,7 @@ import ProfilePage from "./pages/ProfilePage";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import PostDetailPage from "./pages/PostDetailPage";
+// import UserProfilePage from "./pages/UserProfilePage";
 import { getTitleFromPath } from "./utils/getTitleFromPath";
 import { useState } from "react";
 
@@ -43,6 +44,10 @@ function App() {
             path="/p/:postId"
             element={<PostDetailPage setTitle={setDynamicTitle} />}
           />
+          {/* <Route 
+            path="/u/:userId"
+            element={<UserProfilePage setTitle={setDynamicTitle} />}
+          /> */}
         </Routes>
       </div>
     </div>
