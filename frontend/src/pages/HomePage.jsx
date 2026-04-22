@@ -97,7 +97,7 @@ export default function HomePage() {
   return (
     <div className="mt-8 pb-6">
       {posts.map((post) => (
-        <FeedPostCard post={post} />
+        <FeedPostCard key={post._id} post={post} />
       ))}
 
       {error && <p>{error}</p>}

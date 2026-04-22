@@ -11,6 +11,7 @@ import ResetPassword from "./pages/ResetPassword";
 import PostDetailPage from "./pages/PostDetailPage";
 import { getTitleFromPath } from "./utils/getTitleFromPath";
 import { useState } from "react";
+import PublicProfilePage from "./pages/PublicProfilePage";
 
 function App() {
   const location = useLocation();
@@ -39,6 +40,7 @@ function App() {
           <Route path="/account" element={<ProfilePage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/user/:userId" element={<PublicProfilePage />} />
           <Route
             path="/p/:postId"
             element={<PostDetailPage setTitle={setDynamicTitle} />}

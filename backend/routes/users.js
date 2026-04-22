@@ -4,6 +4,20 @@ const User = require("../models/User");
 const authMiddleware = require("../middleware/authMiddleware");
 const upload = require("../middleware/uploadMiddleware");
 
+router.get("/:id", async (req, res) => {
+  try{
+    const user = await User.findById(req.params.id).select("-passwordHash -resetPasswordToken -resetPasswordExpires");
+
+    if(!user){
+      return res.status(404).json({message: "User not found"});
+    }
+    res.status(200).json(user);
+  }catch(err){
+    console.error("PUBLIC PROFILE ERROR: ", err);
+    res.status(500).json({message: "Internal Server Error Fetching Profile"});
+  }
+});
+
 
 //PUT ROUTE: Update users profile
 router.put("/update", authMiddleware, upload.single("profilePic"), async (req, res) => {

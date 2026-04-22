@@ -21,3 +21,18 @@ export async function updateUser({ username, bio, profilePic }) {
     };
   }
 }
+
+export async function getUserProfile(userId){
+  try{
+    const response = await apiClient.get(`/api/profile/${userId}`);
+    return {
+      data: response.data,
+      error: null,
+    };
+  }catch(err){
+    return {
+      data: null,
+      error: err.response?.data?.message || "Error getting profile",
+    };
+  }
+}
