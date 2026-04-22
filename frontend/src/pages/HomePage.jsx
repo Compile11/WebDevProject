@@ -105,13 +105,6 @@ export default function HomePage() {
     );
   }
 
-const resetFeed = () => {
-  setPosts([]);
-  setPage(1);
-  setHasMore(true);
-  loadPosts(1);
-};
-
   return (
       <div className="max-w-[1400px] mx-auto mt-6 pb-6 px-4">
         {/* THE 3-COLUMN GRID */}
