@@ -5,6 +5,8 @@ import FeedPostCard from "../components/FeedPostCard";
 import LeftSidebar from "../components/layout/LeftSidebar";
 import RightSidebar from "../components/layout/RightSidebar";
 
+import FilterBar from "../components/FilterBar";
+
 export default function HomePage() {
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
@@ -115,6 +117,10 @@ export default function HomePage() {
 
           {/* MAIN FEED (Spans 2 cols on mid, 3 cols on large) */}
           <div className="col-span-1 md:col-span-2 lg:col-span-3">
+
+            {/* SEARCH BAR right above feed, move/rescale if desired */}
+            <FilterBar setPosts={setPosts} />
+
             {/* Forum Sorting Header */}
             <div className="flex justify-between items-center bg-gray-800/80 p-3 rounded-lg border border-gray-700 mb-4">
               <span className="text-white font-semibold text-sm">Latest Activity</span>
