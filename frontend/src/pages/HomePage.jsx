@@ -5,7 +5,7 @@ import FeedPostCard from "../components/FeedPostCard";
 import LeftSidebar from "../components/layout/LeftSidebar";
 import RightSidebar from "../components/layout/RightSidebar";
 
-import SearchBar from "../components/SearchBar";
+import FilterBar from "../components/FilterBar";
 
 export default function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -119,7 +119,7 @@ export default function HomePage() {
           <div className="col-span-1 md:col-span-2 lg:col-span-3">
 
             {/* SEARCH BAR right above feed, move/rescale if desired */}
-            <SearchBar setPosts={setPosts} />
+            <FilterBar setPosts={setPosts} />
 
             {/* Forum Sorting Header */}
             <div className="flex justify-between items-center bg-gray-800/80 p-3 rounded-lg border border-gray-700 mb-4">
