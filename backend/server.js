@@ -8,6 +8,8 @@ require("dotenv").config();
 const Post = require("./models/Post");
 const authRoutes = require("./routes/auth"); // <-- Fixed typo!
 const authMiddleware = require("./middleware/authMiddleware");
+const {getToxicityScore} = require("./utils/moderator");
+
 const app = express();
 
 app.use(
@@ -32,6 +34,7 @@ app.get("/", (_req, res) => {
   res.send("Backend is running");
 });
 
+//gets
 app.get("/api/posts", async (req, res) => {
   try {
     const page = Math.max(parseInt(req.query.page) || 1, 1);
@@ -99,12 +102,22 @@ app.get("/api/posts/:postId", async (req, res) => {
   }
 });
 
+//posts
+
 app.post("/api/posts", authMiddleware, async (req, res) => {
   try {
     const { title, body, tags } = req.body;
     if (!title || !body) {
       return res.status(400).json({ message: "title and body are required" });
     }
+    // --- AI MODERATION GATEKEEPER ---
+    const combineText = `${ title }. ${ body }`;
+    const scores = await getToxicityScore(combineText);
+
+    if(scores&&scores.toxicity>0.8){
+      return res.status(400).json({message: "AI MODERATION: POST FLAGGED FOR HIGH TOXICITY"});
+    }
+    //__________________________________
 
     const newPost = new Post({
       title: title.trim(),
@@ -123,6 +136,8 @@ app.post("/api/posts", authMiddleware, async (req, res) => {
   }
 });
 
+
+//puts
 app.put("/api/posts/:id/like", authMiddleware, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
