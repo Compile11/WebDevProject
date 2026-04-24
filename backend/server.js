@@ -40,10 +40,16 @@ app.get("/api/posts", async (req, res) => {
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const limit = Math.min(Math.max(parseInt(req.query.limit) || 10, 1), 50);
     const skip = (page - 1) * limit;
+    const flair = req.query.flair;
 
-    const totalPosts = await Post.countDocuments();
+    let query = {};
+    if (flair&&flair!=="All Discussions"){
+      query.flair = flair;
+    }
 
-    const posts = await Post.find()
+    const totalPosts = await Post.countDocuments(query);
+
+    const posts = await Post.find(query)
       .populate("userId", "username email profilePic")
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -106,7 +112,7 @@ app.get("/api/posts/:postId", async (req, res) => {
 
 app.post("/api/posts", authMiddleware, async (req, res) => {
   try {
-    const { title, body, tags } = req.body;
+    const { title, body, tags, flair } = req.body;
     if (!title || !body) {
       return res.status(400).json({ message: "title and body are required" });
     }
@@ -123,6 +129,7 @@ app.post("/api/posts", authMiddleware, async (req, res) => {
       title: title.trim(),
       body: body.trim(),
       tags: Array.isArray(tags) ? tags : [],
+      flair: flair || "Q & A",
       userId: req.user.id,
     });
 

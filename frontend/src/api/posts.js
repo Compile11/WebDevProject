@@ -2,29 +2,21 @@ import { apiClient } from "./client";
 
 export async function getAllPosts(page, limit) {
   try {
-    const response = await apiClient.get(
-      `/api/posts?page=${page}&limit=${limit}`,
-    );
-
-    return {
-      data: response.data,
-      error: null,
-    };
+    const response = await apiClient.get(`/api/posts?page=${page}&limit=${limit}`);
+    return { data: response.data, error: null };
   } catch (error) {
     console.error("Error fetching posts:", error);
-
-    return {
-      data: null,
-      error: "Could not fetch posts",
-    };
+    return { data: null, error: "Could not fetch posts" };
   }
 }
 
-export async function getPostFeed(page = 1, limit = 10) {
+// THIS IS THE FUNCTION UPDATED FOR FLAIRS
+export async function getPostFeed(page = 1, limit = 10, flair = null) {
   try {
-    const response = await apiClient.get("/api/posts", {
-      params: { page, limit },
-    });
+    const params = { page, limit };
+    if (flair) params.flair = flair;
+
+    const response = await apiClient.get("/api/posts", { params });
 
     return {
       data: response.data.posts,
@@ -32,6 +24,9 @@ export async function getPostFeed(page = 1, limit = 10) {
       error: null,
     };
   } catch (err) {
+    // 1. added this log so we can see the exact JS error if it fails!
+    console.error("DEBUG FETCH ERROR:", err);
+
     return {
       data: null,
       pagination: null,
@@ -42,14 +37,8 @@ export async function getPostFeed(page = 1, limit = 10) {
 
 export async function getPostById(postId) {
   try {
-    console.log("requesting postId:", postId)
     const response = await apiClient.get(`/api/posts/${postId}`);
-    console.log("full response:", response)
-
-    return {
-      data: response.data,
-      error: null,
-    };
+    return { data: response.data, error: null };
   } catch (err) {
     return {
       data: null,
@@ -61,14 +50,8 @@ export async function getPostById(postId) {
 export async function getPostsByUserId(userId) {
   try {
     const response = await apiClient.get(`/api/users/${userId}/posts`);
-
-    return {
-      data: response.data,
-      error: null,
-    };
+    return { data: response.data, error: null };
   } catch (err) {
-    console.error(`Error fetching posts for userId: ${userId}:`, err);
-
     return {
       data: null,
       error: err.response?.data?.message || "Error fetching posts",

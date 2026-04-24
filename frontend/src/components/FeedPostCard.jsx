@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { MessageSquare, ThumbsUp, ThumbsDown } from "lucide-react";
 import { togglePostLike, togglePostDislike } from "../api/votes";
 import { useAuth } from "../context/AuthContext";
+import {getFlairStyle} from "../utils/flairColors";
 
 export default function FeedPostCard({ post }) {
   const navigate = useNavigate();
@@ -74,6 +75,24 @@ export default function FeedPostCard({ post }) {
         <p className="text-sm text-gray-300 line-clamp-2 ml-13">
           {post.body}
         </p>
+        {/* FLAIR AND TAGS COMBINED */}
+        <div className="ml-auto flex gap-2 items-center">
+
+          {/* Render the single colored Flair */}
+          {post.flair && (
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${getFlairStyle(post.flair)}`}>
+              {post.flair}
+            </span>
+          )}
+
+          {/* Render up to 2 standard free-text tags */}
+          {post.tags && post.tags.length > 0 && post.tags.slice(0, 2).map((tag, index) => (
+              <span key={`${tag}-${index}`} className="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded border border-gray-700">
+              #{tag}
+            </span>
+          ))}
+
+        </div>
 
         {/* FOOTER: Stats & Votes */}
         <div className="flex items-center gap-4 ml-13 mt-1 text-xs font-medium text-gray-500">

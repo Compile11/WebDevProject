@@ -19,6 +19,7 @@ const postSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+      flair: {type:String, default:"Q & A"},
       likes: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}],
       dislikes: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}],
   },

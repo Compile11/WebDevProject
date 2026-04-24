@@ -79,6 +79,16 @@ export default function PostPage() {
           className="border rounded px-3 py-2"
           required
         />
+        {/*Dropdown for preset flair */}
+        <select
+        value = {postData.flair}
+        onChange={(e) => setPostData((prev) => ({ ...prev, flair: e.target.value }))}
+        className="border border-gray-600 bg-gray-800 text-white rounded px-3 py-2 cursor-pointer focus:outline-none focus:border-blue-500"
+        >
+          {["Q & A", "Articles", "Object-Oriented", "OS & Kernels", "Game Dev"].map(flair => (
+              <option key={flair} value={flair}>{flair}</option>
+          ))}
+        </select>
 
         <textarea
           placeholder="Body"
