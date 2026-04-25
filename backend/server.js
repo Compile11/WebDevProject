@@ -3,7 +3,9 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const commentRoutes = require("./routes/comment");
 
-require("dotenv").config();
+require("dotenv").config({
+ path: process.env.NODE_ENV === "production" ? ".env.production" : ".env",
+});
 
 const Post = require("./models/Post");
 const authRoutes = require("./routes/auth"); // <-- Fixed typo!
@@ -14,7 +16,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL, 
     credentials: true,
   }),
 );
