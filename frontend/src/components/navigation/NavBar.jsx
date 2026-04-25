@@ -26,7 +26,7 @@ export const NavBar = ({ title }) => {
           ))}
         </div>
 
-        <div className="absolute left-1/2 -translate-x-1/2 text-3xl font-semibold pointer-events-none">
+        <div className="absolute left-1/2 -translate-x-1/2 text-3xl text-gray-800 dark:text-white font-semibold pointer-events-none">
           {title}
         </div>
         <AccountButton />
