@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Loader } from "lucide-react";
 import { loginUser, registerUser } from "../../api/auth";
+import {Turnstile} from "@marsidev/react-turnstile";
 
 export default function LoginSignup({ setIsForgotPassword }) {
   const [isLogin, setIsLogin] = useState(true);
@@ -11,6 +12,7 @@ export default function LoginSignup({ setIsForgotPassword }) {
   const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
 
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -18,6 +20,10 @@ export default function LoginSignup({ setIsForgotPassword }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    if(!turnstileToken){
+      setError("Please complete security check to complete");
+      return;
+    }
     setIsLoading(true);
 
     try {
@@ -25,6 +31,7 @@ export default function LoginSignup({ setIsForgotPassword }) {
         const data = await loginUser({
           email,
           password,
+          turnstileToken,
         });
 
         login({
@@ -38,6 +45,7 @@ export default function LoginSignup({ setIsForgotPassword }) {
           username,
           email,
           password,
+          turnstileToken,
         });
 
         login({
@@ -50,6 +58,7 @@ export default function LoginSignup({ setIsForgotPassword }) {
     } catch (error) {
       console.error("AUTHENTICATION ERROR:", error);
       setError(error.error || "Authentication failed");
+      setTurnstileToken("");
     } finally {
       setIsLoading(false);
     }
@@ -118,6 +127,14 @@ export default function LoginSignup({ setIsForgotPassword }) {
           >
             Forgot Password?
           </div>
+        </div>
+
+        <div className="flex justify-center mb-4">
+          <Turnstile
+              siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+              onSuccess={(token) => setTurnstileToken(token)}
+              options={{ theme: "auto" }} // Automatically matches your dark/light mode!
+          />
         </div>
 
         <button

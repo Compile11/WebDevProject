@@ -1,11 +1,12 @@
 import { apiClient } from "./client";
 
-export async function registerUser({ username, email, password }) {
+export async function registerUser({ username, email, password, turnstileToken }) {
   try {
     const response = await apiClient.post("/api/users/register", {
       username,
       email,
       password,
+      turnstileToken,
     });
 
     return response.data
@@ -14,12 +15,13 @@ export async function registerUser({ username, email, password }) {
   }
 }
 
-export async function loginUser({ email, password }) {
+export async function loginUser({ email, password, turnstileToken }) {
   try {
     const response = await apiClient.post("/api/users/login", {
       email,
-      password
-    })
+      password,
+      turnstileToken,
+    });
 
     return response.data
   } catch (err) {
