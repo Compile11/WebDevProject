@@ -23,12 +23,15 @@ async function authMiddleware(req, res, next) {
       return res.status(401).json({ message: "User not found" });
     }
 
+    User.findByIdAndUpdate(decoded.id, {lastActive: new Date()}).catch(err=>console.error(err));
+
     req.user = {
       id: user._id,
       username: user.username,
       email: user.email,
       bio: user?.bio,
       profilePic: user?.profilePic,
+      role: user.role,
     };
 
     next();

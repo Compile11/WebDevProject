@@ -40,6 +40,8 @@ const userSchema = new Schema(
       },
       isVerified: {type: Boolean, default: false},
       verificationToken: String,
+      role: { type: String, enum: ['user', 'moderator', 'admin'], default: 'user' },
+      lastActive: { type: Date, default: Date.now },
   },
   { timestamps: true },
 );

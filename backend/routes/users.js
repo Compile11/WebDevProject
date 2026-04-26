@@ -4,6 +4,21 @@ const User = require("../models/User");
 const authMiddleware = require("../middleware/authMiddleware");
 const upload = require("../middleware/uploadMiddleware");
 
+router.get("/staff/online", async (req, res) => {
+  try{
+    const fifteenMinsAgo = new Date(Date.now() - 15+60+1000);
+
+    const staff = await User.find({
+      role: {$in: ['admin', 'moderator']},
+      lastActive: {$gte: fifteenMinsAgo}
+    }).select("username profilePic role");
+
+  }catch(err){
+    console.error("STAFF FETCH ERROR: ",err);
+    res.status(500).json({message: "Failed to fetch Staff"});
+  }
+});
+
 router.get("/:id", async (req, res) => {
   try{
     const user = await User.findById(req.params.id).select("-passwordHash -resetPasswordToken -resetPasswordExpires");

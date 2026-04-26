@@ -36,3 +36,12 @@ export async function getUserProfile(userId){
     };
   }
 }
+
+export async function getOnlineStaff(){
+  try{
+    const response = await apiClient.get(`/api/profile/staff/online`);
+    return {data:response.data, error: null};
+  }catch(err){
+    return {data: null, error: "Error fetching staff"};
+  }
+}
