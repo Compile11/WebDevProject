@@ -55,7 +55,7 @@ export default function PostPage() {
   };
 
   return (
-    <div className="mx-[200px] pt-6">
+    <div className="w-full max-w-4xl mx-auto pt-6 px-4 lg:px-0">
       {error && (
         <div className="mb-4 rounded bg-red-100 px-3 py-2 text-red-700">
           {error}

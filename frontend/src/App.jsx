@@ -26,7 +26,7 @@ function App() {
 
   const layoutClass = hiddenNavbarRoutes.includes(location.pathname)
     ? ""
-    : "mx-[200px]";
+    : "w-full max-w-[1600px] mx-auto";
 
   return (
     <div className="min-h-screen w-screen">

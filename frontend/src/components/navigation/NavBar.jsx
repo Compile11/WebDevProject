@@ -5,7 +5,7 @@ import AccountButton from "./AccountButton";
 export const NavBar = ({ title }) => {
   return (
     <div className="w-full h-[60px]">
-      <div className="mx-[200px] h-full flex items-center justify-between text-white">
+      <div className="w-full max-w-[1600px] mx-auto h-full flex items-center justify-between text-white px-4 lg:px-[200px]">
         <div className="flex items-center space-x-4">
           {routes.map((route) => (
             <Link

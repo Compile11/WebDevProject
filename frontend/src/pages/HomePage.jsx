@@ -94,6 +94,24 @@ export default function HomePage() {
           </div>
 
           <div className="col-span-1 md:col-span-2 lg:col-span-3">
+            {/* NEW: MOBILE HORIZONTAL CATEGORY SCROLLER */}
+            <div className="md:hidden flex overflow-x-auto gap-2 pb-2 mb-4 scrollbar-hide">
+              {["All Discussions", "Q & A", "Articles", "Object-Oriented", "OS & Kernels", "Game Dev"].map(category => {
+                const isActive = activeCategory === category || (!activeCategory && category === "All Discussions");
+                return (
+                    <button
+                        key={category}
+                        onClick={() => setActiveCategory(category === "All Discussions" ? null : category)}
+                        className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition ${
+                            isActive ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-300 border border-gray-700"
+                        }`}
+                    >
+                      {category}
+                    </button>
+                );
+              })}
+            </div>
+
             <FilterBar setPosts={setPosts} />
 
             <div className="flex justify-between items-center bg-gray-800/80 p-3 rounded-lg border border-gray-700 mb-4">
