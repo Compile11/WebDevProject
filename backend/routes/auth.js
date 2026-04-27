@@ -5,17 +5,45 @@ const User = require("../models/User");
 const authMiddleware = require("../middleware/authMiddleware");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
+const rateLimit = require("express-rate-limit");
 
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
+const authLimiter = rateLimit({
+  windowMs: 15*60*1000, //15 Minutes
+  max: 5,
+  message:{message: "Too many attempts from this IP, please try again after 15 minutes"},
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+router.post("/register", authLimiter, async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, turnstileToken } = req.body;
 
     if (!username || !email || !password) {
       return res
         .status(400)
         .json({ message: "Username, email, and password are required" });
+    }
+    if(!turnstileToken) {
+      return res
+      .status(400)
+          .json({message:"Security CAPTCHA token is missing"});
+    }
+
+    const verifyRes = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      body: `secret=${process.env.TURNSTILE_SECRET_KEY}&response=${turnstileToken}`
+    });
+
+    const verifyData = await verifyRes.json();
+
+    if(!verifyData.success) {
+      return res
+      .status(400)
+          .json({message:"Security check failed. Please refresh and try again."});
     }
 
     //checking if email already exists
@@ -101,7 +129,8 @@ router.post("/login", async (req, res) => {
         username: user.username,
         email: user.email,
         bio: user?.bio,
-        profilePic: user?.profilePic
+        profilePic: user?.profilePic,
+        role: user.role
       },
     });
   } catch (err) {
@@ -204,7 +233,8 @@ router.get("/me", authMiddleware, async (req, res) => {
         username: user.username,
         email: user.email,
         bio: user.bio,
-        profilePic: user.profilePic // React desperately needs this!
+        profilePic: user.profilePic, // React desperately needs this!
+        role: user.role // <-- ADD THIS LINE!
       }
     });
   } catch (err) {

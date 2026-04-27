@@ -3,6 +3,22 @@ const router = express.Router();
 const User = require("../models/User");
 const authMiddleware = require("../middleware/authMiddleware");
 const upload = require("../middleware/uploadMiddleware");
+const bcrypt = require("bcryptjs");
+
+router.get("/staff/online", async (req, res) => {
+  try{
+    const fifteenMinsAgo = new Date(Date.now() - 15+60+1000);
+
+    const staff = await User.find({
+      role: {$in: ['admin', 'moderator']},
+      lastActive: {$gte: fifteenMinsAgo}
+    }).select("username profilePic role");
+
+  }catch(err){
+    console.error("STAFF FETCH ERROR: ",err);
+    res.status(500).json({message: "Failed to fetch Staff"});
+  }
+});
 
 router.get("/:id", async (req, res) => {
   try{
@@ -68,8 +84,59 @@ router.put("/update", authMiddleware, upload.single("profilePic"), async (req, r
   }
 });
 
+//UPDATE EMAIL
 router.put("/update-email", authMiddleware, async (req, res) => {
-  // TODO
+  try{
+    const {newEmail, currentPassword} = req.body;
+
+    const user = await User.findById(req.params.id);
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+
+    if(!isMatch) return res.status(404).json({ message: "INCORRECT PASSWORD. CANNOT UPDATE EMAIL" });
+
+    const emailTaken = await User.findOne({email: newEmail});
+    if(emailTaken && emailTaken._id.toString()!==req.user.id){
+      return res.status(400).json({ message: "Email already taken" });
+    }
+
+    user.email = newEmail;
+    await user.save();
+
+  }catch(err){
+    console.error("EMAIL UPDATE ERROR: ", err);
+    res.status(500).json({message: "Server error updating email"});
+  }
+});
+
+//UPDATE PASSWORD
+router.put("/update-password", authMiddleware, async (req, res) => {
+  try{
+    const {currentPassword, newPassword} = req.body;
+    const user = await User.findById(req.params.id);
+    const isMatch = await bcrypt.compare(currentPassword, user.passwordHash);
+
+    if(!isMatch) return res.status(400).json({ message: "Incorrect password" });
+
+    const salt = await bcrypt.genSalt(10);
+    user.passwordHash = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    res.status(200).json({message: "Password updated successfully"});
+  }catch(err){
+    console.error("PASSWORD UPDATE ERROR: ", err);
+    res.status(500).json({message: "Server error during update password"});
+  }
+});
+
+//DELETE ACCOUNT
+router.delete("/delete-account", authMiddleware, async (req, res) => {
+  try{
+    await User.findByIdAndDelete(req.user.id);
+    res.status(200).json({message: "User deleted successfully"});
+  }catch(err){
+    console.error("DELETE ACCOUNT ERROR: ", err);
+    res.status(500).json({message: "Server error during delete account"});
+  }
 });
 
 module.exports = router;

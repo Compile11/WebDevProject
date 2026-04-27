@@ -4,6 +4,7 @@ import FeedPostCard from "../components/FeedPostCard";
 import LeftSidebar from "../components/layout/LeftSidebar";
 import RightSidebar from "../components/layout/RightSidebar";
 import FilterBar from "../components/FilterBar";
+import {getOnlineStaff} from "../api/user";
 
 export default function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -13,6 +14,7 @@ export default function HomePage() {
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState("");
   const [totalThreads, setTotalThreads] = useState(0);
+  const [onlineStaff, setOnlineStaff] = useState([]);
 
   // THE NEW CATEGORY STATE
   const [activeCategory, setActiveCategory] = useState(null);
@@ -73,6 +75,14 @@ export default function HomePage() {
       if (currentRef) observer.unobserve(currentRef);
     };
   }, [page, hasMore, isFetchingMore, isInitialLoading, activeCategory]);
+
+  useEffect(() => {
+    async function fetchStaff(){
+      const res = await getOnlineStaff();
+      if(!res.error) setOnlineStaff(res.data);
+    }
+    fetchStaff();
+  }, []);
 
   // 3. Loading Skeleton
   if (isInitialLoading) {
@@ -138,7 +148,7 @@ export default function HomePage() {
           </div>
 
           <div className="col-span-1 hidden lg:block">
-            <RightSidebar totalThreads={totalThreads} onlineUsers={1} />
+            <RightSidebar totalThreads={totalThreads} onlineUsers={1} onlineStaff={onlineStaff} />
           </div>
         </div>
       </div>
