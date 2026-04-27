@@ -5,6 +5,7 @@ import CommentsSection from "../components/CommentsSection";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { togglePostLike, togglePostDislike } from "../api/votes";
 import { useAuth } from "../context/AuthContext";
+import MarkdownPost from "../utils/MarkdownPost";
 
 export default function PostDetailPage({ setTitle }) {
   const { postId } = useParams();
@@ -123,7 +124,9 @@ export default function PostDetailPage({ setTitle }) {
 
           {/* --- Bottom Part: The Body (Separated by a border) --- */}
           <div className="border-t-[3px] border-gray-700 p-8 min-h-[150px] bg-gray-900/50">
-            <p className="text-gray-200 text-lg whitespace-pre-wrap">{post.body}</p>
+            <div className="prose prose-invert max-w-none">
+              <MarkdownPost content={post.body} />
+            </div>
           </div>
         </div>
 
