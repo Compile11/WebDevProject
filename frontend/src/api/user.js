@@ -45,3 +45,36 @@ export async function getOnlineStaff(){
     return {data: null, error: "Error fetching staff"};
   }
 }
+
+export async function updateEmail(newEmail, currentPassword){
+  try{
+    const response = await apiClient.put("/api/profile/update-email", {
+      newEmail,
+      currentPassword
+    });
+    return {data:response.data, error: null};
+  }catch(err){
+    return {data: null, error: err.response?.data?.message || "Error updating email",};
+  }
+}
+
+export async function updatePassword(currentPassword, newPassword){
+  try{
+    const response = await apiClient.put("/api/profile/update-password", {
+      currentPassword,
+      newPassword
+    });
+    return {data:response.data, error: null};
+  }catch(err){
+    return {data: null, error: err.response?.data?.message || "Error updating current password"};
+  }
+}
+
+export async function deleteMyAccount(){
+  try{
+    const response = await apiClient.delete("/api/profile/delete-account");
+    return {data:response.data, error: null};
+  }catch(err){
+    return {data: null, error: err.response?.data?.message||"Error deleting account"};
+  }
+}
