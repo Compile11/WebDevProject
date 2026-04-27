@@ -53,6 +53,16 @@ export default function AccountButton() {
                 <Settings />
                 <span>Settings</span>
               </Link>
+              {/* NEW: ONLY ADMINS SEE THIS LINK */}
+              {currentUser?.role === 'admin' && (
+                  <Link
+                      to="/admin"
+                      className="flex items-center gap-2 px-4 py-3 hover:bg-gray-300 dark:hover:bg-gray-600 transition text-red-500 dark:text-red-400 font-bold border-t border-gray-300 dark:border-gray-600"
+                  >
+                    <ShieldAlert size={18} />
+                    <span>Admin Panel</span>
+                  </Link>
+              )}
 
               <button
                 onClick={logout}
