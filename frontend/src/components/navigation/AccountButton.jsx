@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { CircleUser, Loader, LogOut, Settings, User } from "lucide-react";
+import { CircleUser, Loader, LogOut, Settings, User, ShieldAlert } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
 export default function AccountButton() {

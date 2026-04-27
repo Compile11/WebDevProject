@@ -129,7 +129,8 @@ router.post("/login", async (req, res) => {
         username: user.username,
         email: user.email,
         bio: user?.bio,
-        profilePic: user?.profilePic
+        profilePic: user?.profilePic,
+        role: user.role
       },
     });
   } catch (err) {
@@ -232,7 +233,8 @@ router.get("/me", authMiddleware, async (req, res) => {
         username: user.username,
         email: user.email,
         bio: user.bio,
-        profilePic: user.profilePic // React desperately needs this!
+        profilePic: user.profilePic, // React desperately needs this!
+        role: user.role // <-- ADD THIS LINE!
       }
     });
   } catch (err) {
