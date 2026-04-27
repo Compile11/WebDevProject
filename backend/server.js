@@ -26,6 +26,7 @@ app.use("/api/users", authRoutes);
 app.use("/api/posts/:postId/comments", commentRoutes);
 app.use("/api/profile", require("./routes/users"));
 app.use("/api/comments", commentRoutes);
+app.use("/api/admin", require("./routes/admin"));
 
 mongoose
   .connect(process.env.MONGO_URI)
