@@ -3,7 +3,7 @@ import { createNewPost } from "../api/posts";
 import { useAuth } from "../context/AuthContext";
 import { Loader } from "lucide-react";
 
-import MarkdownEditor from "../components/ui/MarkdownToolbar";
+import MarkdownEditor from "../components/ui/MarkdownEditor";
 
 export default function PostPage() {
   const [postData, setPostData] = useState({
