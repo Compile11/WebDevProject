@@ -5,7 +5,7 @@ import { MessageSquare, ThumbsUp, ThumbsDown } from "lucide-react";
 import { togglePostLike, togglePostDislike } from "../api/votes";
 import { useAuth } from "../context/AuthContext";
 import {getFlairStyle} from "../utils/flairColors";
-import MarkdownPost from "../utils/MarkdownPost";
+import MarkdownPost from "./ui/MarkdownPost";
 
 export default function FeedPostCard({ post }) {
   const navigate = useNavigate();
