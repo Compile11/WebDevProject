@@ -5,7 +5,7 @@ import CommentsSection from "../components/CommentsSection";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { togglePostLike, togglePostDislike } from "../api/votes";
 import { useAuth } from "../context/AuthContext";
-import MarkdownPost from "../utils/MarkdownPost";
+import MarkdownPost from "../components/ui/MarkdownPost";
 
 export default function PostDetailPage({ setTitle }) {
   const { postId } = useParams();
