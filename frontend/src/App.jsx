@@ -12,6 +12,8 @@ import PostDetailPage from "./pages/PostDetailPage";
 import { getTitleFromPath } from "./utils/getTitleFromPath";
 import { useState } from "react";
 import PublicProfilePage from "./pages/PublicProfilePage";
+import AdminDashboard from "./pages/AdminDashboard";
+import SettingsPage from "./pages/SettingsPage";
 
 function App() {
   const location = useLocation();
@@ -38,6 +40,8 @@ function App() {
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/post" element={<PostPage />} />
           <Route path="/account" element={<ProfilePage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="/user/:userId" element={<PublicProfilePage />} />
