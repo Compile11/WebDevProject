@@ -74,7 +74,7 @@ export default function FeedPostCard({ post }) {
 
         {/* BODY SNIPPET */}
         <div className="text-sm text-gray-300 ml-13 line-clamp-2 overflow-hidden">
-          <MarkdownPost content={post.body} />
+          <MarkdownPost content={post.body} compact />
         </div>
         {/* FLAIR AND TAGS COMBINED */}
         <div className="ml-auto flex gap-2 items-center">
