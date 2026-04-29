@@ -4,11 +4,6 @@ import {
   Italic,
   Strikethrough,
   Code,
-<<<<<<< HEAD
-=======
-  List,
-  ListOrdered,
->>>>>>> 7fd68fd0b133c47a6f32920dc14fdc69a9a5ebea
 } from "lucide-react";
 
 function insertAtCursor(textarea, before, after = "") {
