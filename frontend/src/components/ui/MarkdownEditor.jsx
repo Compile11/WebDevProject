@@ -112,13 +112,16 @@ export default function MarkdownEditor({ content, setContent }) {
         </button>
       </div>
 
-      <textarea
-        ref={textareaRef}
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="Write your post... Use the toolbar for formatting"
-        className="w-full h-40 bg-gray-900 text-gray-100 p-3 outline-none resize-none"
-      />
+      <div className="border border-gray-700 rounded bg-gray-900 px-3 py-2 min-h-[150px] flex">
+        <textarea
+          ref={textareaRef}
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="Body"
+          className="flex-1 bg-transparent text-gray-100 outline-none resize-none leading-relaxed"
+          required
+        />
+      </div>
     </div>
   );
 }
