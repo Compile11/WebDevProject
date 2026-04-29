@@ -49,7 +49,7 @@ export default function MarkdownEditor({ content, setContent }) {
       
       <div className="flex flex-wrap gap-1 p-2 border-b border-gray-700 bg-gray-800 rounded-t-lg">
 
-        <button
+        <button type="button"
           onClick={() => applyFormat("**", "**")}
           className="p-2 hover:bg-gray-700 rounded"
           title="Bold"
@@ -57,7 +57,7 @@ export default function MarkdownEditor({ content, setContent }) {
           <Bold size={16} />
         </button>
 
-        <button
+        <button type="button"
           onClick={() => applyFormat("*", "*")}
           className="p-2 hover:bg-gray-700 rounded"
           title="Italic"
@@ -65,7 +65,7 @@ export default function MarkdownEditor({ content, setContent }) {
           <Italic size={16} />
         </button>
 
-        <button
+        <button type="button"
           onClick={() => applyFormat("~~", "~~")}
           className="p-2 hover:bg-gray-700 rounded"
           title="Strikethrough"
@@ -75,7 +75,7 @@ export default function MarkdownEditor({ content, setContent }) {
 
         <div className="w-px bg-gray-600 mx-1" />
 
-        <button
+        <button type="button"
           onClick={() => applyFormat("`", "`")}
           className="p-2 hover:bg-gray-700 rounded"
           title="Inline Code"
@@ -83,7 +83,7 @@ export default function MarkdownEditor({ content, setContent }) {
           <Code size={16} />
         </button>
 
-        <button
+        <button type="button"
           onClick={() => applyFormat("\n```insert_language\n", "\n```\n")}
           className="p-2 hover:bg-gray-700 rounded text-xs font-mono"
           title="Code Block"
