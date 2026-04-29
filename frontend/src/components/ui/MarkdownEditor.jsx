@@ -84,7 +84,7 @@ export default function MarkdownEditor({ content, setContent }) {
         </button>
 
         <button
-          onClick={() => applyFormat("\n```js\n", "\n```\n")}
+          onClick={() => applyFormat("\n```insert_language\n", "\n```\n")}
           className="p-2 hover:bg-gray-700 rounded text-xs font-mono"
           title="Code Block"
         >
