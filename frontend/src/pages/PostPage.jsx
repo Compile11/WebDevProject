@@ -97,7 +97,9 @@ export default function PostPage() {
           setContent={(value) =>
             setPostData((prev) => ({ ...prev, body: value }))
           }
+          required
         />
+        
         <input
           type="text"
           placeholder="Tags (comma separated)"
