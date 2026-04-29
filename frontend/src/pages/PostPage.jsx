@@ -3,6 +3,8 @@ import { createNewPost } from "../api/posts";
 import { useAuth } from "../context/AuthContext";
 import { Loader } from "lucide-react";
 
+import MarkdownEditor from "../components/ui/MarkdownEditor";
+
 export default function PostPage() {
   const [postData, setPostData] = useState({
     title: "",
@@ -90,15 +92,14 @@ export default function PostPage() {
           ))}
         </select>
 
-        <textarea
-          placeholder="Body"
-          value={postData.body}
-          onChange={(e) =>
-            setPostData((prev) => ({ ...prev, body: e.target.value }))
+        <MarkdownEditor
+          content={postData.body}
+          setContent={(value) =>
+            setPostData((prev) => ({ ...prev, body: value }))
           }
-          className="border rounded px-3 py-2 min-h-[150px]"
           required
         />
+        
         <input
           type="text"
           placeholder="Tags (comma separated)"

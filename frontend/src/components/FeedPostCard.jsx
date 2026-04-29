@@ -5,6 +5,7 @@ import { MessageSquare, ThumbsUp, ThumbsDown } from "lucide-react";
 import { togglePostLike, togglePostDislike } from "../api/votes";
 import { useAuth } from "../context/AuthContext";
 import {getFlairStyle} from "../utils/flairColors";
+import MarkdownPost from "./ui/MarkdownPost";
 
 export default function FeedPostCard({ post }) {
   const navigate = useNavigate();
@@ -72,9 +73,9 @@ export default function FeedPostCard({ post }) {
         </div>
 
         {/* BODY SNIPPET */}
-        <p className="text-sm text-gray-300 line-clamp-2 ml-13">
-          {post.body}
-        </p>
+        <div className="text-sm text-gray-300 ml-13 line-clamp-2 overflow-hidden">
+          <MarkdownPost content={post.body} compact />
+        </div>
         {/* FLAIR AND TAGS COMBINED */}
         <div className="ml-auto flex gap-2 items-center">
 
