@@ -4,8 +4,6 @@ import {
   Italic,
   Strikethrough,
   Code,
-  List,
-  ListOrdered,
 } from "lucide-react";
 
 function insertAtCursor(textarea, before, after = "") {
@@ -75,6 +73,8 @@ export default function MarkdownEditor({ content, setContent }) {
           <Strikethrough size={16} />
         </button>
 
+        <div className="w-px bg-gray-600 mx-1" />
+
         <button
           onClick={() => applyFormat("`", "`")}
           className="p-2 hover:bg-gray-700 rounded"
@@ -82,26 +82,6 @@ export default function MarkdownEditor({ content, setContent }) {
         >
           <Code size={16} />
         </button>
-
-        <div className="w-px bg-gray-600 mx-1" />
-
-        <button
-          onClick={() => applyFormat("\n- ", "")}
-          className="p-2 hover:bg-gray-700 rounded"
-          title="Bullet List"
-        >
-          <List size={16} />
-        </button>
-
-        <button
-          onClick={() => applyFormat("\n1. ", "")}
-          className="p-2 hover:bg-gray-700 rounded"
-          title="Numbered List"
-        >
-          <ListOrdered size={16} />
-        </button>
-
-        <div className="w-px bg-gray-600 mx-1" />
 
         <button
           onClick={() => applyFormat("\n```js\n", "\n```\n")}
