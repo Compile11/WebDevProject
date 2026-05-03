@@ -44,7 +44,7 @@ export default function FeedPostCard({ post }) {
   return (
       <div
           onClick={() => navigate(`/p/${post._id}`)}
-          className="w-full bg-[#222428] hover:bg-[#2a2d32] rounded-lg p-4 shadow-sm transition-colors cursor-pointer border border-gray-800 hover:border-gray-600 flex flex-col gap-3"
+          className="w-full bg-gray-200 hover:bg-gray-300 dark:bg-[#222428] dark:hover:bg-[#2a2d32] rounded-lg p-4 shadow-sm transition-colors cursor-pointer border border-gray-300 hover:border-gray-100 dark:border-gray-800 dark:hover:border-gray-600 flex flex-col gap-3"
       >
         {/* HEADER: Avatar, Username, Time */}
         <div className="flex items-center gap-3">
@@ -52,17 +52,17 @@ export default function FeedPostCard({ post }) {
             {post.userId?.profilePic ? (
                 <img src={post.userId.profilePic} alt="" className="w-10 h-10 rounded-full object-cover border border-gray-600" />
             ) : (
-                <div className="w-10 h-10 rounded-full bg-blue-900/50 border border-blue-500 flex items-center justify-center text-sm font-bold text-blue-400">
+                <div className="w-10 h-10 rounded-full bg-blue-900/50 border border-blue-500 flex items-center justify-center text-sm font-bold text-blue-600 dark:text-blue-400">
                   {post.userId?.username?.[0]?.toUpperCase() || "U"}
                 </div>
             )}
           </div>
 
           <div className="flex flex-col">
-            <h2 className="text-base font-semibold text-gray-100 hover:text-blue-400 transition-colors line-clamp-1">
+            <h2 className="text-base font-semibold text-gray-600 dark:text-gray-100 hover:text-blue-400 transition-colors line-clamp-1">
               {post.title}
             </h2>
-            <div className="flex items-center gap-2 text-xs text-gray-400">
+            <div className="flex items-center gap-2 text-xs text-gray-800 dark:text-gray-400">
             <span onClick={handleUserClick} className="hover:underline z-10">
               {post.userId?.username || "Unknown Student"}
             </span>
@@ -73,7 +73,7 @@ export default function FeedPostCard({ post }) {
         </div>
 
         {/* BODY SNIPPET */}
-        <div className="text-sm text-gray-300 ml-13 line-clamp-2 overflow-hidden">
+        <div className="text-sm text-gray-700 dark:text-gray-300 ml-13 line-clamp-2 overflow-hidden">
           <MarkdownPost content={post.body} compact />
         </div>
         {/* FLAIR AND TAGS COMBINED */}
@@ -88,7 +88,7 @@ export default function FeedPostCard({ post }) {
 
           {/* Render up to 2 standard free-text tags */}
           {post.tags && post.tags.length > 0 && post.tags.slice(0, 2).map((tag, index) => (
-              <span key={`${tag}-${index}`} className="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded border border-gray-700">
+              <span key={`${tag}-${index}`} className="text-[10px] bg-gray-300 dark:bg-gray-800 text-gray-800 dark:text-gray-400 px-2 py-0.5 rounded border border-gray-700">
               #{tag}
             </span>
           ))}
@@ -96,12 +96,12 @@ export default function FeedPostCard({ post }) {
         </div>
 
         {/* FOOTER: Stats & Votes */}
-        <div className="flex items-center gap-4 ml-13 mt-1 text-xs font-medium text-gray-500">
+        <div className="flex items-center gap-4 ml-13 mt-1 text-xs font-medium dark:text-gray-500">
 
           {/* THUMBS UP */}
           <div
               onClick={(e) => handleVote(e, "like")}
-              className={`flex items-center gap-1.5 transition hover:text-gray-200 ${hasLiked ? "text-blue-500" : ""}`}
+              className={`flex items-center gap-1.5 transition hover:text-gray-700 dark:hover:text-gray-200 ${hasLiked ? "text-blue-500" : ""}`}
           >
             <ThumbsUp size={14} fill={hasLiked ? "currentColor" : "none"} />
             <span>{likes.length}</span>
@@ -110,13 +110,13 @@ export default function FeedPostCard({ post }) {
           {/* THUMBS DOWN */}
           <div
               onClick={(e) => handleVote(e, "dislike")}
-              className={`flex items-center gap-1.5 transition hover:text-gray-200 ${hasDisliked ? "text-red-500" : ""}`}
+              className={`flex items-center gap-1.5 transition hover:text-gray-700 dark:hover:text-gray-200 ${hasDisliked ? "text-red-500" : ""}`}
           >
             <ThumbsDown size={14} fill={hasDisliked ? "currentColor" : "none"} />
             <span>{dislikes.length}</span>
           </div>
 
-          <div className="flex items-center gap-1.5 hover:text-blue-400 transition-colors">
+          <div className="flex items-center gap-1.5 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
             <MessageSquare size={14} />
             <span>Reply</span>
           </div>
@@ -125,7 +125,7 @@ export default function FeedPostCard({ post }) {
           {post.tags && post.tags.length > 0 && (
               <div className="ml-auto flex gap-2">
                 {post.tags.slice(0, 2).map((tag, index) => (
-                    <span key={`${tag}-${index}`} className="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded">#{tag}</span>
+                    <span key={`${tag}-${index}`} className="text-[10px] bg-gray-400 dark:bg-gray-800 text-gray-700 dark:text-gray-400 px-2 py-0.5 rounded">#{tag}</span>
                 ))}
               </div>
           )}

@@ -85,8 +85,6 @@ export default function SettingsPage(){
     };
     return (
         <div className="max-w-3xl mx-auto mt-10 px-4 pb-20 space-y-8">
-            <h1 className="text-3xl font-bold text-white mb-8">Account Settings</h1>
-
             {message && (
                 <div className={`p-4 rounded flex items-center gap-2 font-semibold border transition-all ${isError ? 'bg-red-900/50 text-red-400 border-red-800' : 'bg-green-900/50 text-green-400 border-green-800'}`}>
                     {isError ? <AlertTriangle size={20}/> : <CheckCircle size={20}/>}

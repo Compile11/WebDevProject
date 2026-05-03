@@ -21,6 +21,8 @@ export default function ThemeToggle() {
       document.documentElement.classList.toggle("dark", theme === "dark");
       localStorage.setItem("theme", theme);
     }
+
+    window.dispatchEvent(new Event("themeChange"))
   }, [theme]);
 
   useEffect(() => {

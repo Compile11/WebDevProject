@@ -138,8 +138,8 @@ export default function HomePage() {
 
           <FilterBar setPosts={setPosts} />
 
-          <div className="flex justify-between items-center bg-gray-800/80 p-3 rounded-lg border border-gray-700 mb-4">
-            <span className="text-white font-semibold text-sm">
+          <div className="flex justify-between items-center bg-gray-300 dark:bg-gray-800/80 p-3 rounded-lg border border-gray-700 mb-4">
+            <span className="text-gray-800 dark:text-white font-semibold text-sm">
               {/* Dynamically change header based on what was clicked! */}
               {activeCategory
                 ? `${activeCategory} Discussions`
