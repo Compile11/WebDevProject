@@ -4,7 +4,7 @@ import FeedPostCard from "../components/FeedPostCard";
 import LeftSidebar from "../components/layout/LeftSidebar";
 import RightSidebar from "../components/layout/RightSidebar";
 import FilterBar from "../components/FilterBar";
-import {getOnlineStaff} from "../api/user";
+import { getOnlineStaff } from "../api/user";
 
 export default function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -22,7 +22,11 @@ export default function HomePage() {
   const observerRef = useRef(null);
 
   const loadPosts = async (currentPage, currentCategory) => {
-    if ((isFetchingMore && currentPage !== 1) || (!hasMore && currentPage !== 1)) return;
+    if (
+      (isFetchingMore && currentPage !== 1) ||
+      (!hasMore && currentPage !== 1)
+    )
+      return;
 
     if (currentPage === 1) setIsInitialLoading(true);
     else setIsFetchingMore(true);
@@ -59,13 +63,18 @@ export default function HomePage() {
   // 2. Trigger load when scrolling down (Infinite Scroll)
   useEffect(() => {
     const observer = new IntersectionObserver(
-        (entries) => {
-          const firstEntry = entries[0];
-          if (firstEntry.isIntersecting && hasMore && !isFetchingMore && !isInitialLoading) {
-            loadPosts(page, activeCategory);
-          }
-        },
-        { threshold: 1 }
+      (entries) => {
+        const firstEntry = entries[0];
+        if (
+          firstEntry.isIntersecting &&
+          hasMore &&
+          !isFetchingMore &&
+          !isInitialLoading
+        ) {
+          loadPosts(page, activeCategory);
+        }
+      },
+      { threshold: 1 },
     );
 
     const currentRef = observerRef.current;
@@ -77,80 +86,112 @@ export default function HomePage() {
   }, [page, hasMore, isFetchingMore, isInitialLoading, activeCategory]);
 
   useEffect(() => {
-    async function fetchStaff(){
+    async function fetchStaff() {
       const res = await getOnlineStaff();
-      if(!res.error) setOnlineStaff(res.data);
+      if (!res.error) setOnlineStaff(res.data);
     }
     fetchStaff();
   }, []);
 
-  // 3. Loading Skeleton
-  if (isInitialLoading) {
-    return (
-        <div className="max-w-[1400px] mx-auto mt-8 space-y-2 px-4">
-          {Array.from({ length: 10 }).map((_, i) => (
-              <div key={i} className="w-full h-[74px] bg-gray-800 rounded-md animate-pulse" />
-          ))}
-        </div>
-    );
-  }
-
   return (
-      <div className="max-w-[1400px] mx-auto mt-6 pb-6 px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6">
+    <div className="max-w-[1400px] mx-auto mt-6 pb-6 px-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-6">
+        <div className="col-span-1">
+          <LeftSidebar
+            activeCategory={activeCategory}
+            setActiveCategory={setActiveCategory}
+          />
+        </div>
 
-          <div className="col-span-1">
-            <LeftSidebar activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
+        <div className="col-span-1 md:col-span-2 lg:col-span-3">
+          {/* NEW: MOBILE HORIZONTAL CATEGORY SCROLLER */}
+          <div className="md:hidden flex overflow-x-auto gap-2 pb-2 mb-4 scrollbar-hide">
+            {[
+              "All Discussions",
+              "Q & A",
+              "Articles",
+              "Object-Oriented",
+              "OS & Kernels",
+              "Game Dev",
+            ].map((category) => {
+              const isActive =
+                activeCategory === category ||
+                (!activeCategory && category === "All Discussions");
+              return (
+                <button
+                  key={category}
+                  onClick={() =>
+                    setActiveCategory(
+                      category === "All Discussions" ? null : category,
+                    )
+                  }
+                  className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition ${isActive
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-800 text-gray-300 border border-gray-700"
+                    }`}
+                >
+                  {category}
+                </button>
+              );
+            })}
           </div>
 
-          <div className="col-span-1 md:col-span-2 lg:col-span-3">
-            {/* NEW: MOBILE HORIZONTAL CATEGORY SCROLLER */}
-            <div className="md:hidden flex overflow-x-auto gap-2 pb-2 mb-4 scrollbar-hide">
-              {["All Discussions", "Q & A", "Articles", "Object-Oriented", "OS & Kernels", "Game Dev"].map(category => {
-                const isActive = activeCategory === category || (!activeCategory && category === "All Discussions");
-                return (
-                    <button
-                        key={category}
-                        onClick={() => setActiveCategory(category === "All Discussions" ? null : category)}
-                        className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition ${
-                            isActive ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-300 border border-gray-700"
-                        }`}
-                    >
-                      {category}
-                    </button>
-                );
-              })}
-            </div>
+          <FilterBar setPosts={setPosts} />
 
-            <FilterBar setPosts={setPosts} />
-
-            <div className="flex justify-between items-center bg-gray-800/80 p-3 rounded-lg border border-gray-700 mb-4">
+          <div className="flex justify-between items-center bg-gray-800/80 p-3 rounded-lg border border-gray-700 mb-4">
             <span className="text-white font-semibold text-sm">
               {/* Dynamically change header based on what was clicked! */}
-              {activeCategory ? `${activeCategory} Discussions` : "Latest Activity"}
+              {activeCategory
+                ? `${activeCategory} Discussions`
+                : "Latest Activity"}
             </span>
-            </div>
+          </div>
 
+          {isInitialLoading ? (
+            <div className="max-w-[1400px] mx-auto mt-8 space-y-2 px-4">
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="w-full h-[74px] bg-gray-800 rounded-md animate-pulse"
+                />
+              ))}
+            </div>
+          ) : (
             <div className="space-y-3">
               {posts.length === 0 && !error ? (
-                  <p className="text-gray-400 text-center py-10">No posts found in this category.</p>
+                <p className="text-gray-400 text-center py-10">
+                  No posts found in this category.
+                </p>
               ) : (
-                  posts.map((post) => (
-                      <FeedPostCard key={post._id} post={post} />
-                  ))
+                posts.map((post) => <FeedPostCard key={post._id} post={post} />)
               )}
 
-              {error && <p className="text-red-500 text-center py-4">{error}</p>}
-              {isFetchingMore && <p className="text-gray-400 text-center py-4 animate-pulse">Loading older posts...</p>}
+              {error && (
+                <p className="text-red-500 text-center py-4">{error}</p>
+              )}
+              {isFetchingMore && (
+                <p className="text-gray-400 text-center py-4 animate-pulse">
+                  Loading older posts...
+                </p>
+              )}
               <div ref={observerRef} style={{ height: "20px" }} />
-              {!hasMore && posts.length > 0 && <p className="text-gray-500 text-center text-sm italic py-4">No more posts to show.</p>}
+              {!hasMore && posts.length > 0 && (
+                <p className="text-gray-500 text-center text-sm italic py-4">
+                  No more posts to show.
+                </p>
+              )}
             </div>
-          </div>
+          )}
+        </div>
 
-          <div className="col-span-1 hidden lg:block">
-            <RightSidebar totalThreads={totalThreads} onlineUsers={1} onlineStaff={onlineStaff} />
-          </div>
+        <div className="col-span-1 hidden lg:block">
+          <RightSidebar
+            totalThreads={totalThreads}
+            onlineUsers={1}
+            onlineStaff={onlineStaff}
+          />
         </div>
       </div>
+    </div>
   );
 }
