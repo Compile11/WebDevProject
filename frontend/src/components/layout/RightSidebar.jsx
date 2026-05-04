@@ -8,25 +8,24 @@ export default function RightSidebar({
   return (
     <div className="space-y-4 hidden lg:block">
       {/* Forum Stats Widget */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50">
-        <h3 className="text-white font-bold text-sm mb-4">Forum Statistics</h3>
+      <div className="bg-gray-200 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-700/50">
+        <h3 className="text-gray-900 dark:text-white font-bold text-sm mb-4">Forum Statistics</h3>
         <div className="space-y-3 text-sm">
-          <div className="flex justify-between text-gray-400">
+          <div className="flex justify-between text-gray-800 dark:text-gray-400">
             <span>Online Users</span>
             <span className="text-blue-500 font-bold">{onlineUsers || 1}</span>
           </div>
-          <div className="flex justify-between text-gray-400">
+          <div className="flex justify-between text-gray-800 dark:text-gray-400">
             <span>Total Threads</span>
-            <span className="text-white">{totalThreads || 0}</span>
+            <span className="text-gray-900 dark:text-white">{totalThreads || 0}</span>
           </div>
         </div>
       </div>
 
-      <AdUnit slot="SIDEBAR_AD_SLOT" />
 
       {/* Staff Online Widget */}
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50">
-        <h3 className="text-white font-bold text-sm mb-4">Staff Online</h3>
+      <div className="bg-gray-200 dark:bg-gray-800/50 rounded-lg p-4 border border-gray-700/50">
+        <h3 className="text-gray-900 dark:text-white font-bold text-sm mb-4">Staff Online</h3>
         <div className="space-y-3">
           {onlineStaff.length === 0 ? (
             <p className="text-xs text-gray-500 italic">
@@ -61,6 +60,7 @@ export default function RightSidebar({
           )}
         </div>
       </div>
+      <AdUnit slot="8355704602" />
     </div>
   );
 }

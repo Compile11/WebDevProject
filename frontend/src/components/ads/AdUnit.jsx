@@ -16,7 +16,7 @@ export default function AdUnit({ slot }) {
 
   if (isDev) {
     return (
-    <div className="my-4 rounded-lg border border-dashed border-gray-600 bg-gray-800/40 p-4 text-center text-xs text-gray-400">
+    <div className="my-4 rounded-lg border border-dashed border-gray-600 bg-gray-200 dark:bg-gray-800/40 p-4 text-center text-xs text-gray-800 dark:text-gray-400">
         Ad Placeholder
       </div>
     )

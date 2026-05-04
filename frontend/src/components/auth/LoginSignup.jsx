@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { Loader } from "lucide-react";
@@ -13,9 +13,28 @@ export default function LoginSignup({ setIsForgotPassword }) {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [isDark, setIsDark] = useState(false)
 
   const navigate = useNavigate();
   const { login } = useAuth();
+
+
+  useEffect(() => {
+    const updateTheme = () => {
+      const isDark = document.documentElement.classList.contains("dark")
+      setIsDark(isDark)
+    }
+
+    updateTheme();
+
+    window.addEventListener("themeChange", updateTheme)
+    window.addEventListener("storage", updateTheme)
+
+    return () => {
+    window.addEventListener("themeChange", updateTheme)
+      window.removeEventListener("storage", updateTheme)
+    }
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -133,7 +152,7 @@ export default function LoginSignup({ setIsForgotPassword }) {
           <Turnstile
               siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
               onSuccess={(token) => setTurnstileToken(token)}
-              options={{ theme: "auto" }} // Automatically matches your dark/light mode!
+              options={{ theme: isDark ? "dark" : "light" }} // Automatically matches your dark/light mode!
           />
         </div>
 
