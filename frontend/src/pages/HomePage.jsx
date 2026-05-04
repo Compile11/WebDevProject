@@ -5,6 +5,7 @@ import LeftSidebar from "../components/layout/LeftSidebar";
 import RightSidebar from "../components/layout/RightSidebar";
 import FilterBar from "../components/FilterBar";
 import { getOnlineStaff } from "../api/user";
+import AdUnit from "../components/ads/AdUnit";
 
 export default function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -163,7 +164,12 @@ export default function HomePage() {
                   No posts found in this category.
                 </p>
               ) : (
-                posts.map((post) => <FeedPostCard key={post._id} post={post} />)
+                posts.map((post, index) => (
+                  <div key={post._id}>
+                    <FeedPostCard post={post} />
+                    {(index + 1) % 5 === 0 && <AdUnit slot="FEED_AD_SLOT" />}
+                  </div>
+                ))
               )}
 
               {error && (
