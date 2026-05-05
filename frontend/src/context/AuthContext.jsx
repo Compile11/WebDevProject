@@ -18,7 +18,7 @@ export function AuthProvider({ children }) {
   const logout = () => {
     localStorage.removeItem("token");
     setCurrentUser(null);
-    navigate("/auth")
+    navigate("/auth");
   };
 
   useEffect(() => {
@@ -45,14 +45,20 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-  <AuthContext.Provider
-      value={{ currentUser, setCurrentUser, login, logout, authLoading }}
+    <AuthContext.Provider
+      value={{
+        currentUser,
+        setCurrentUser,
+        login,
+        logout,
+        authLoading,
+      }}
     >
       {children}
     </AuthContext.Provider>
-  )
+  );
 }
 
 export function useAuth() {
-  return useContext(AuthContext)
+  return useContext(AuthContext);
 }

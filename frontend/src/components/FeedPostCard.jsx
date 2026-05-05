@@ -6,6 +6,7 @@ import { togglePostLike, togglePostDislike } from "../api/votes";
 import { useAuth } from "../context/AuthContext";
 import {getFlairStyle} from "../utils/flairColors";
 import MarkdownPost from "./ui/MarkdownPost";
+import SubscriptionBadge from "../components/subscription/SubscriptionBadge";
 
 export default function FeedPostCard({ post }) {
   const navigate = useNavigate();
@@ -63,8 +64,9 @@ export default function FeedPostCard({ post }) {
               {post.title}
             </h2>
             <div className="flex items-center gap-2 text-xs text-gray-800 dark:text-gray-400">
-            <span onClick={handleUserClick} className="hover:underline z-10">
-              {post.userId?.username || "Unknown Student"}
+            <span onClick={handleUserClick} className="hover:underline z-10 flex items-center gap-1.5">
+              <span>{post.userId?.username || "Unknown Student"}</span>
+              <SubscriptionBadge user={post.userId} />
             </span>
               <span>•</span>
               <span>{formatTime(post.createdAt)}</span>

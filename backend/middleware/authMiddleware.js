@@ -32,6 +32,15 @@ async function authMiddleware(req, res, next) {
       bio: user?.bio,
       profilePic: user?.profilePic,
       role: user.role,
+
+      subscriptionStatus: user.subscriptionStatus,
+      subscriptionTier: user.subscriptionTier,
+      stripeCustomerId: user.stripeCustomerId,
+      stripeSubscriptionId: user.stripeSubscriptionId,
+      subscriptionCurrentPeriodEnd: user.subscriptionCurrentPeriodEnd,
+      subscriptionCancelAtPeriodEnd: user.subscriptionCancelAtPeriodEnd,
+      subscriptionCanceledAt: user.subscriptionCanceledAt,
+      subscriptionEndsAt: user.subscriptionEndsAt,
     };
 
     next();
