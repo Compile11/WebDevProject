@@ -4,6 +4,7 @@ export default function RightSidebar({
   totalThreads,
   onlineUsers,
   onlineStaff = [],
+  user
 }) {
   return (
     <div className="space-y-4 hidden lg:block">
@@ -60,7 +61,7 @@ export default function RightSidebar({
           )}
         </div>
       </div>
-      <AdUnit slot="8355704602" />
+      <AdUnit slot="8355704602" user={user}/>
     </div>
   );
 }

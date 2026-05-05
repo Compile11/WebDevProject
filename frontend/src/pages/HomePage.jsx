@@ -6,8 +6,10 @@ import RightSidebar from "../components/layout/RightSidebar";
 import FilterBar from "../components/FilterBar";
 import { getOnlineStaff } from "../api/user";
 import AdUnit from "../components/ads/AdUnit";
+import { useAuth } from "../context/AuthContext";
 
 export default function HomePage() {
+  const { currentUser } = useAuth()
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -167,7 +169,7 @@ export default function HomePage() {
                 posts.map((post, index) => (
                   <div key={post._id}>
                     <FeedPostCard post={post} />
-                    {(index + 1) % 5 === 0 && <AdUnit slot="4836185431" />}
+                    {(index + 1) % 5 === 0 && <AdUnit slot="4836185431" user={currentUser}/>}
                   </div>
                 ))
               )}
@@ -195,6 +197,7 @@ export default function HomePage() {
             totalThreads={totalThreads}
             onlineUsers={1}
             onlineStaff={onlineStaff}
+            user={currentUser}
           />
         </div>
       </div>

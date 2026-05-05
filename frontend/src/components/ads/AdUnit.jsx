@@ -20,6 +20,14 @@ export default function AdUnit({ slot, user }) {
   }, [isSubscriber]);
 
   if (isDev) {
+    if (isSubscriber) {
+      return (
+        <div className="my-4 rounded-lg border border-dashed border-gray-600 bg-gray-200 dark:bg-gray-800/40 p-4 text-center text-xs text-gray-800 dark:text-gray-400">
+          Ad Placeholder (you are a subscriber)
+        </div>
+      );
+    }
+
     return (
       <div className="my-4 rounded-lg border border-dashed border-gray-600 bg-gray-200 dark:bg-gray-800/40 p-4 text-center text-xs text-gray-800 dark:text-gray-400">
         Ad Placeholder
