@@ -233,8 +233,16 @@ router.get("/me", authMiddleware, async (req, res) => {
         username: user.username,
         email: user.email,
         bio: user.bio,
-        profilePic: user.profilePic, // React desperately needs this!
-        role: user.role // <-- ADD THIS LINE!
+        profilePic: user.profilePic, 
+        role: user.role,
+
+        subscriptionStatus: user.subscriptionStatus,
+        subscriptionTier: user.subscriptionTier,
+        stripeCustomerId: user.stripeCustomerId,
+        subscriptionCurrentPeriodEnd: user.subscriptionCurrentPeriodEnd,
+        subscriptionCancelAtPeriodEnd: user.subscriptionCancelAtPeriodEnd,
+        subscriptionCanceledAt: user.subscriptionCanceledAt,
+        subscriptionEndsAt: user.subscriptionEndsAt,
       }
     });
   } catch (err) {

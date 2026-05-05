@@ -2,9 +2,11 @@ import { useEffect } from "react"
 
 const isDev = import.meta.env.DEV;
 
-export default function AdUnit({ slot }) {
+export default function AdUnit({ slot, user }) {
+  const isSubscriber = user?.subscriptionStatus === "active";
+
   useEffect(() => {
-    if (isDev) return;
+    if (isDev || isSubscriber) return;
 
     try {
       window.adsbygoogle = window.adsbygoogle || [];

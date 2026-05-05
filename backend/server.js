@@ -21,6 +21,13 @@ app.use(
   }),
 );
 
+
+app.post(
+  "/api/stripe/webhook",
+  express.raw({ type: "application/json" }),
+  require("./routes/stripeWebhook")
+);
+
 app.use(express.json());
 app.use("/api/users", authRoutes);
 app.use("/api/posts/:postId/comments", commentRoutes);
@@ -53,7 +60,7 @@ app.get("/api/posts", async (req, res) => {
     const totalPosts = await Post.countDocuments(query);
 
     const posts = await Post.find(query)
-      .populate("userId", "username email profilePic")
+      .populate("userId", "username profilePic subscriptionStatus subscriptionTier")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -82,7 +89,7 @@ app.get("/api/users/:userId/posts", async (req, res) => {
     }
 
     const posts = await Post.find({ userId })
-      .populate("userId", "username email")
+      .populate("userId", "username profilePic subscriptionStatus subscriptionTier")
       .sort({ createdAt: -1 });
 
     res.status(200).json(posts);
@@ -97,7 +104,7 @@ app.get("/api/posts/:postId", async (req, res) => {
 
     const post = await Post.findById(postId).populate(
       "userId",
-      "username email profilePic",
+      "username profilePic subscriptionStatus subscriptionTier",
     );
 
 
@@ -112,6 +119,8 @@ app.get("/api/posts/:postId", async (req, res) => {
 });
 
 //posts
+
+app.use("/api/stripe", require("./routes/stripe"))
 
 app.post("/api/posts", authMiddleware, async (req, res) => {
   try {
