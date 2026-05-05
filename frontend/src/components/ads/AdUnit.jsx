@@ -1,9 +1,12 @@
-import { useEffect } from "react"
+import { useEffect } from "react";
 
 const isDev = import.meta.env.DEV;
 
 export default function AdUnit({ slot, user }) {
-  const isSubscriber = user?.subscriptionStatus === "active";
+  const isSubscriber =
+    user?.subscriptionStatus === "active" ||
+    user?.subscriptionStatus === "trialing" ||
+    user?.subscriptionStatus === "canceling";
 
   useEffect(() => {
     if (isDev || isSubscriber) return;
@@ -14,14 +17,18 @@ export default function AdUnit({ slot, user }) {
     } catch (e) {
       console.error("Ad error:", e);
     }
-  }, []);
+  }, [isSubscriber]);
 
   if (isDev) {
     return (
-    <div className="my-4 rounded-lg border border-dashed border-gray-600 bg-gray-200 dark:bg-gray-800/40 p-4 text-center text-xs text-gray-800 dark:text-gray-400">
+      <div className="my-4 rounded-lg border border-dashed border-gray-600 bg-gray-200 dark:bg-gray-800/40 p-4 text-center text-xs text-gray-800 dark:text-gray-400">
         Ad Placeholder
       </div>
-    )
+    );
+  }
+
+  if (isSubscriber) {
+    return null;
   }
 
   return (
