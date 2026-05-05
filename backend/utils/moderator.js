@@ -1,4 +1,7 @@
 const axios = require('axios');
+const vision = require('@google-cloud/vision');
+
+const visionClient = new vision.ImageAnnotatorClient();
 
 const getToxicityScore = async (text) => {
     try {
@@ -29,4 +32,36 @@ const getToxicityScore = async (text) => {
     }
 };
 
-module.exports = {getToxicityScore};
+const moderateImage = async (imageUrl) => {
+    try{
+        const [safeSearchResult] = await visionClient.safeSearchDetection(imageUrl);
+        const safeSearch = safeSearchResult.safeSearchAnnotation;
+
+        const isNsfw = ['LIKELY', 'VERY_LIKELY'].includes(safeSearch.adult);
+        const isViolent = ['LIKELY', 'VERY_LIKELY'].includes(safeSearch.violence);
+
+        const [textResult] = await visionClient.textDetection(imageUrl);
+        const extractedText = textResult.fullTextAnnotation ? textResult.fullTextAnnotation.text : "";
+
+        let isTextToxic = false;
+        if (extractedText.trim().length > 0) {
+            const scores = await getToxicityScore(textResult, extractedText);
+            if (scores&&scores.toxicity>0.8){
+                isTextToxic = true;
+            }
+        }
+        return {
+            isSafe: !isNsfw && !isViolent && !isTextToxic,
+            reason: isNsfw ? "Explicit visual content detected" :
+                isViolent ? "Violent visual content detected" :
+                    isTextToxic ? "Toxic text detected within the image" : null
+        };
+
+    }catch(err){
+        console.error("IMAGE MODERATION ERROR:", err);
+    }
+}
+
+
+
+module.exports = {getToxicityScore, moderateImage};

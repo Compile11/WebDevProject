@@ -1,6 +1,7 @@
 # Environment Variables
 .env
 .env.*
+google-credentials.json
 
 # Node Modules
 node_modules/

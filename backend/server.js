@@ -2,7 +2,6 @@ require("dotenv").config({
   path: process.env.NODE_ENV === "production" ? ".env.production" : ".env",
 });
 
-
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -13,7 +12,8 @@ const postUpload = require("./middleware/postUploadMiddleware");
 const Post = require("./models/Post");
 const authRoutes = require("./routes/auth"); // <-- Fixed typo!
 const authMiddleware = require("./middleware/authMiddleware");
-const {getToxicityScore} = require("./utils/moderator");
+const {getToxicityScore, moderateImage} = require("./utils/moderator");
+const cloudinary = require('cloudinary').v2;
 
 const app = express();
 
@@ -142,6 +142,18 @@ app.post("/api/posts", authMiddleware, postUpload.single("image"), async (req, r
 
     const imageUrl = req.file ? req.file.path:null;
 
+    /*
+    if (imageUrl) {
+        const imageStatus = await moderateImage(imageUrl);
+
+        if (!imageStatus.isSafe) {
+            await cloudinary.uploader.destroy(req.file.filename);
+            return res.status(400).json({ message: `AI MODERATION: ${imageStatus.reason}` });
+        }
+    }
+    */
+
+    let parsedTags = [];
     if(tags){
       parsedTags = typeof tags === 'string' ? tags.split(',').map(t => t.trim()).filter(Boolean) : tags;
     }
