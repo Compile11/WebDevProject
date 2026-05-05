@@ -78,6 +78,18 @@ export default function FeedPostCard({ post }) {
         <div className="text-sm text-gray-700 dark:text-gray-300 ml-13 line-clamp-2 overflow-hidden">
           <MarkdownPost content={post.body} compact />
         </div>
+
+        {/* NEW: POST IMAGE (Feed Preview) */}
+        {post.image && (
+            <div className="ml-13 mt-3 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900/50 flex justify-center">
+              <img
+                  src={post.image}
+                  alt="Post content"
+                  className="max-h-80 w-auto object-contain"
+              />
+            </div>
+        )}
+
         {/* FLAIR AND TAGS COMBINED */}
         <div className="ml-auto flex gap-2 items-center">
 

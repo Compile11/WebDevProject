@@ -130,6 +130,21 @@ export default function PostDetailPage({ setTitle }) {
           </div>
         </div>
 
+        {/* NEW: FULL-SIZE POST IMAGE */}
+        {post.image && (
+            <div className="mb-8 rounded-lg overflow-hidden border border-gray-700 bg-black/40 flex justify-center p-2">
+              <img
+                  src={post.image}
+                  alt="Post attachment"
+                  className="max-h-[600px] w-auto object-contain rounded"
+              />
+            </div>
+        )}
+
+        <div className="prose prose-invert max-w-none">
+          <MarkdownPost content={post.body} />
+        </div>
+
         {/* PANEL 2: THE COMMENTS SECTION */}
         <div className="border-[3px] border-gray-700 bg-gray-900 rounded-lg p-6">
           <CommentsSection postId={post._id} />
