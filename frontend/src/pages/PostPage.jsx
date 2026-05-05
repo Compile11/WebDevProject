@@ -14,6 +14,7 @@ export default function PostPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
 
   const { currentUser } = useAuth();
 
@@ -22,38 +23,34 @@ export default function PostPage() {
     setError("");
     setIsLoading(true);
 
-    console.log("hello");
-
     if (!currentUser) {
       setError("Login or signup to post!");
       setIsLoading(false);
       return;
     }
 
-    const newPost = {
-      ...postData,
-      tags: postData.tags
-        .split(",")
-        .map((tag) => tag.trim())
-        .filter(Boolean),
-    };
+    // Construct FormData to hold the text AND the file
+    const formData = new FormData();
+    formData.append("title", postData.title);
+    formData.append("body", postData.body);
+    formData.append("flair", postData.flair || "Q & A");
+    formData.append("tags", postData.tags); // The backend will split this string now
 
-    try {
-      await createNewPost(newPost);
-
-      setPostData({
-        title: "",
-        body: "",
-        tags: "",
-      });
-
-      setSuccess("Post created!");
-    } catch (err) {
-      console.error(err);
-      setError(err.message || "Failed to create post");
-    } finally {
-      setIsLoading(false);
+    if (imageFile) {
+      formData.append("image", imageFile);
     }
+
+    const result = await createNewPost(formData);
+
+    if (result.error) {
+      setError(result.error);
+    } else {
+      setSuccess("Post created!");
+      setPostData({ title: "", body: "", tags: "", flair: "Q & A" });
+      setImageFile(null); // Clear the image
+    }
+
+    setIsLoading(false);
   };
 
   return (
@@ -91,6 +88,23 @@ export default function PostPage() {
               <option key={flair} value={flair}>{flair}</option>
           ))}
         </select>
+
+        <div className="flex flex-col gap-2 border border-gray-600 bg-gray-800 rounded px-3 py-3">
+          <label className="text-sm font-semibold text-gray-300">
+            Attach Image (Optional)
+          </label>
+          <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImageFile(e.target.files[0])}
+              className="text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600/20 file:text-blue-400 hover:file:bg-blue-600/30 transition cursor-pointer"
+          />
+          {imageFile && (
+              <div className="text-xs text-green-400 mt-1">
+                Ready to upload: {imageFile.name}
+              </div>
+          )}
+        </div>
 
         <MarkdownEditor
           content={postData.body}

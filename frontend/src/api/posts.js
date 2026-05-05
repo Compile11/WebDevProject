@@ -59,11 +59,11 @@ export async function getPostsByUserId(userId) {
   }
 }
 
-export async function createNewPost(postData) {
+export async function createNewPost(formData) {
   try {
-    const response = await apiClient.post("/api/posts", postData);
-    return response.data;
+    const response = await apiClient.post("/api/posts", formData);
+    return { data: response.data, error: null };
   } catch (error) {
-    throw error.response?.data || { message: "Failed to create post" };
+    return { data: null, error: error.response?.data?.message || "Failed to create post" };
   }
 }

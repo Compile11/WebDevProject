@@ -1,11 +1,14 @@
+require("dotenv").config({
+  path: process.env.NODE_ENV === "production" ? ".env.production" : ".env",
+});
+
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const commentRoutes = require("./routes/comment");
+const postUpload = require("./middleware/postUploadMiddleware");
 
-require("dotenv").config({
- path: process.env.NODE_ENV === "production" ? ".env.production" : ".env",
-});
 
 const Post = require("./models/Post");
 const authRoutes = require("./routes/auth"); // <-- Fixed typo!
@@ -122,7 +125,7 @@ app.get("/api/posts/:postId", async (req, res) => {
 
 app.use("/api/stripe", require("./routes/stripe"))
 
-app.post("/api/posts", authMiddleware, async (req, res) => {
+app.post("/api/posts", authMiddleware, postUpload.single("image"), async (req, res) => {
   try {
     const { title, body, tags, flair } = req.body;
     if (!title || !body) {
@@ -137,11 +140,18 @@ app.post("/api/posts", authMiddleware, async (req, res) => {
     }
     //__________________________________
 
+    const imageUrl = req.file ? req.file.path:null;
+
+    if(tags){
+      parsedTags = typeof tags === 'string' ? tags.split(',').map(t => t.trim()).filter(Boolean) : tags;
+    }
+
     const newPost = new Post({
       title: title.trim(),
       body: body.trim(),
       tags: Array.isArray(tags) ? tags : [],
       flair: flair || "Q & A",
+      image: imageUrl,
       userId: req.user.id,
     });
 
