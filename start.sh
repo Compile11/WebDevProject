@@ -10,6 +10,9 @@ cd ../frontend
 npm run dev &
 FRONTEND_PID=$!
 
+stripe listen --forward-to localhost:5000/api/stripe/webhook > /dev/null &
+STRIPE_PID=$!
+
 trap "kill $BACKEND_PID $FRONTEND_PID" EXIT
 
 wait
