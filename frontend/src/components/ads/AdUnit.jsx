@@ -1,6 +1,10 @@
 import { useEffect } from "react";
 
-const isDev = import.meta.env.DEV;
+// const isDev = import.meta.env.DEV;
+//
+// Setting to true until verified on AdSense
+const isDev = true
+
 
 export default function AdUnit({ slot, user }) {
   const isSubscriber =

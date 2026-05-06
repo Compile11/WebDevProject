@@ -32,6 +32,8 @@ export default function MarkdownPost({ content, compact = false }) {
     }
   }, [])
 
+  console.log(isDark)
+
   return (
     <Markdown
       remarkPlugins={[remarkGfm]}
@@ -79,7 +81,7 @@ export default function MarkdownPost({ content, compact = false }) {
           return (
             // Default colors when no language is detected
             <code
-              className="bg-gray-700 px-1 py-0.5 rounded text-sm"
+              className="bg-gray-300 dark:bg-gray-700 px-1 py-0.5 rounded text-sm"
               {...props}
             >
               {children}

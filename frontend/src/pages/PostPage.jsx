@@ -22,8 +22,6 @@ export default function PostPage() {
     setError("");
     setIsLoading(true);
 
-    console.log("hello");
-
     if (!currentUser) {
       setError("Login or signup to post!");
       setIsLoading(false);

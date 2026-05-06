@@ -64,14 +64,14 @@ export default function CommentsSection({ postId }) {
 
       <div className="space-y-4 mb-6">
         {comments.length === 0 ? (
-          <p className="text-gray-500 text-sm italic">
+          <p className="text-gray-700 dark:text-gray-500 text-sm italic">
             No comments yet. Start the conversation!
           </p>
         ) : (
           comments.map((comment) => (
             <div
               key={comment._id}
-              className="bg-gray-800 p-3 rounded-lg border border-gray-700"
+              className="bg-gray-300 dark:bg-gray-800 p-3 rounded-lg border border-gray-400 dark:border-gray-700"
             >
               <span className="text-blue-400 font-bold text-sm mr-2">
                 {comment.userId?.username}
@@ -90,7 +90,7 @@ export default function CommentsSection({ postId }) {
           value={newCommentText}
           onChange={(e) => setNewCommentText(e.target.value)}
           placeholder="Add to the discussion..."
-          className="w-full p-2 bg-gray-900 border border-gray-600 rounded text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none h-20"
+          className="w-full p-2 bg-gray-300 dark:bg-gray-800 border border-gray-600 rounded text-gray-800 dark:text-white placeholder-gray-800 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none h-20"
           required
         />
         <button

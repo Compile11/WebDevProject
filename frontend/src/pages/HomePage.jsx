@@ -38,8 +38,6 @@ export default function HomePage() {
 
     // Send the active category to newly updated api helper!
     const res = await getPostFeed(currentPage, 20, currentCategory);
-    console.log("BACKEND RESPONSE: ", res);
-
     if (res.error) {
       setError(res.error);
       if (currentPage === 1) setIsInitialLoading(false);

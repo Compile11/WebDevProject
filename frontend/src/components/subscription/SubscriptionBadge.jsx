@@ -16,7 +16,7 @@ export default function SubscriptionBadge({ user }) {
 
   return (
     <div
-      title={tier === "tier2" ? "Tier 2 Subscriber" : "Tier 1 Subscriber"}
+      title={tier === "tier2" ? "Maintainer Subscriber" : "Developer Subscriber"}
       className={`${base} ${styles[tier]}`}
     >
       <svg viewBox="0 0 24 24" className="h-3 w-3">
