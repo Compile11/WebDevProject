@@ -32,8 +32,6 @@ export default function MarkdownPost({ content, compact = false }) {
     }
   }, [])
 
-  console.log(isDark)
-
   return (
     <Markdown
       remarkPlugins={[remarkGfm]}

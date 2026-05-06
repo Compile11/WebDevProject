@@ -1,3 +1,4 @@
+require("dotenv").config();
 const Stripe = require("stripe");
 const User = require("../models/User");
 

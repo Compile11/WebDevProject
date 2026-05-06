@@ -84,20 +84,24 @@ export default function FeedPostCard({ post }) {
         </div>
       </div>
 
-      {/* BODY SNIPPET */}
-      <div className="text-sm text-gray-700 dark:text-gray-300 ml-13 line-clamp-2 overflow-hidden">
-        <MarkdownPost content={post.body} compact />
-      </div>
-      {/* FLAIR AND TAGS COMBINED */}
-      <div className="ml-auto flex gap-2 items-center">
-        {/* Render the single colored Flair */}
-        {post.flair && (
-          <span
-            className={`text-[10px] font-bold px-2 py-0.5 rounded border ${getFlairStyle(post.flair)}`}
-          >
-            {post.flair}
-          </span>
+        {/* BODY SNIPPET */}
+        <div className="text-sm text-gray-700 dark:text-gray-300 ml-13 line-clamp-2 overflow-hidden">
+          <MarkdownPost content={post.body} compact />
+        </div>
+
+        {/* NEW: POST IMAGE (Feed Preview) */}
+        {post.image && (
+            <div className="ml-13 mt-3 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900/50 flex justify-center">
+              <img
+                  src={post.image}
+                  alt="Post content"
+                  className="max-h-80 w-auto object-contain"
+              />
+            </div>
         )}
+
+        {/* FLAIR AND TAGS COMBINED */}
+        <div className="ml-auto flex gap-2 items-center">
 
         {/* Render up to 2 standard free-text tags */}
         {post.tags &&

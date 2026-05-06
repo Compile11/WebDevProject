@@ -57,8 +57,8 @@ export default function CommentsSection({ postId }) {
     );
 
   return (
-    <div className="mt-6 border-t border-gray-700 pt-4">
-      <h3 className="text-lg font-semibold text-gray-200 mb-4">
+    <div className="border-gray-700">
+      <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
         Discussion ({comments.length})
       </h3>
 
@@ -76,10 +76,10 @@ export default function CommentsSection({ postId }) {
               <span className="text-blue-400 font-bold text-sm mr-2">
                 {comment.userId?.username}
               </span>
-              <span className="text-gray-500 text-xs">
+              <span className="text-gray-600 dark:text-gray-500 text-xs">
                 {new Date(comment.createdAt).toLocaleDateString()}
               </span>
-              <p className="text-gray-300 mt-1 text-sm">{comment.text}</p>
+              <p className="text-gray-800 dark:text-gray-300 mt-1 text-sm">{comment.text}</p>
             </div>
           ))
         )}

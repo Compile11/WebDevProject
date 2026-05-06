@@ -63,8 +63,6 @@ export default function PostDetailPage({ setTitle }) {
   const hasLiked = likes.some((id) => id.toString() === currentUser?.id);
   const hasDisliked = dislikes.some((id) => id.toString() === currentUser?.id);
 
-  console.log(post);
-
   return (
     <div className="max-w-5xl mx-auto mt-10 space-y-6 pb-20">
       {/* PANEL 1: THE ORIGINAL POST (Header + Body) */}
@@ -150,6 +148,16 @@ export default function PostDetailPage({ setTitle }) {
           </div>
         </div>
       </div>
+      {/* NEW: FULL-SIZE POST IMAGE */}
+      {post.image && (
+        <div className="mb-8 rounded-lg overflow-hidden border border-gray-700 bg-gray-200 dark:bg-[#222428] flex justify-center p-2">
+          <img
+            src={post.image}
+            alt="Post attachment"
+            className="max-h-[600px] w-auto object-contain rounded"
+          />
+        </div>
+      )}
 
       {/* PANEL 2: THE COMMENTS SECTION */}
       <div className="border-[3px] border-gray-400 dark:border-gray-700 bg-gray-200 dark:bg-[#222428] rounded-lg p-6">
