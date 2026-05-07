@@ -8,27 +8,25 @@ const cors = require("cors");
 const commentRoutes = require("./routes/comment");
 const postUpload = require("./middleware/postUploadMiddleware");
 
-
 const Post = require("./models/Post");
 const authRoutes = require("./routes/auth"); // <-- Fixed typo!
 const authMiddleware = require("./middleware/authMiddleware");
-const {getToxicityScore, moderateImage} = require("./utils/moderator");
-const cloudinary = require('cloudinary').v2;
+const { getToxicityScore, moderateImage } = require("./utils/moderator");
+const cloudinary = require("cloudinary").v2;
 
 const app = express();
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL, 
+    origin: process.env.CLIENT_URL,
     credentials: true,
   }),
 );
 
-
 app.post(
   "/api/stripe/webhook",
   express.raw({ type: "application/json" }),
-  require("./routes/stripeWebhook")
+  require("./routes/stripeWebhook"),
 );
 
 app.use(express.json());
@@ -56,14 +54,17 @@ app.get("/api/posts", async (req, res) => {
     const flair = req.query.flair;
 
     let query = {};
-    if (flair&&flair!=="All Discussions"){
+    if (flair && flair !== "All Discussions") {
       query.flair = flair;
     }
 
     const totalPosts = await Post.countDocuments(query);
 
     const posts = await Post.find(query)
-      .populate("userId", "username profilePic subscriptionStatus subscriptionTier")
+      .populate(
+        "userId",
+        "username profilePic subscriptionStatus subscriptionTier",
+      )
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
@@ -92,7 +93,10 @@ app.get("/api/users/:userId/posts", async (req, res) => {
     }
 
     const posts = await Post.find({ userId })
-      .populate("userId", "username profilePic subscriptionStatus subscriptionTier")
+      .populate(
+        "userId",
+        "username profilePic subscriptionStatus subscriptionTier",
+      )
       .sort({ createdAt: -1 });
 
     res.status(200).json(posts);
@@ -110,7 +114,6 @@ app.get("/api/posts/:postId", async (req, res) => {
       "username profilePic subscriptionStatus subscriptionTier",
     );
 
-
     if (!post) {
       return res.status(404).json({ message: "post not found" });
     }
@@ -123,26 +126,32 @@ app.get("/api/posts/:postId", async (req, res) => {
 
 //posts
 
-app.use("/api/stripe", require("./routes/stripe"))
+app.use("/api/stripe", require("./routes/stripe"));
 
-app.post("/api/posts", authMiddleware, postUpload.single("image"), async (req, res) => {
-  try {
-    const { title, body, tags, flair } = req.body;
-    if (!title || !body) {
-      return res.status(400).json({ message: "title and body are required" });
-    }
-    // --- AI MODERATION GATEKEEPER ---
-    const combineText = `${ title }. ${ body }`;
-    const scores = await getToxicityScore(combineText);
+app.post(
+  "/api/posts",
+  authMiddleware,
+  postUpload.single("image"),
+  async (req, res) => {
+    try {
+      const { title, body, tags, flair } = req.body;
+      if (!title || !body) {
+        return res.status(400).json({ message: "title and body are required" });
+      }
+      // --- AI MODERATION GATEKEEPER ---
+      const combineText = `${title}. ${body}`;
+      const scores = await getToxicityScore(combineText);
 
-    if(scores&&scores.toxicity>0.8){
-      return res.status(400).json({message: "AI MODERATION: POST FLAGGED FOR HIGH TOXICITY"});
-    }
-    //__________________________________
+      if (scores && scores.toxicity > 0.8) {
+        return res
+          .status(400)
+          .json({ message: "AI MODERATION: POST FLAGGED FOR HIGH TOXICITY" });
+      }
+      //__________________________________
 
-    const imageUrl = req.file ? req.file.path:null;
+      const imageUrl = req.file ? req.file.path : null;
 
-    /*
+      /*
     if (imageUrl) {
         const imageStatus = await moderateImage(imageUrl);
 
@@ -153,30 +162,39 @@ app.post("/api/posts", authMiddleware, postUpload.single("image"), async (req, r
     }
     */
 
-    let parsedTags = [];
-    if(tags){
-      parsedTags = typeof tags === 'string' ? tags.split(',').map(t => t.trim()).filter(Boolean) : tags;
+      let parsedTags = [];
+      if (tags) {
+        parsedTags =
+          typeof tags === "string"
+            ? tags
+              .split(",")
+              .map((t) => t.trim())
+              .filter(Boolean)
+            : tags;
+      }
+
+      const newPost = new Post({
+        title: title.trim(),
+        body: body.trim(),
+        tags: Array.isArray(tags) ? tags : [],
+        flair: flair || "Q & A",
+        image: imageUrl,
+        userId: req.user.id,
+      });
+
+      const savedPost = await newPost.save();
+      const populatedPost = await savedPost.populate(
+        "userId",
+        "username email",
+      );
+
+      res.status(201).json(populatedPost);
+    } catch (err) {
+      console.error("CREATE POST ERROR:", err);
+      res.status(500).json({ message: "Cannot create post" });
     }
-
-    const newPost = new Post({
-      title: title.trim(),
-      body: body.trim(),
-      tags: Array.isArray(tags) ? tags : [],
-      flair: flair || "Q & A",
-      image: imageUrl,
-      userId: req.user.id,
-    });
-
-    const savedPost = await newPost.save();
-    const populatedPost = await savedPost.populate("userId", "username email");
-
-    res.status(201).json(populatedPost);
-  } catch (err) {
-    console.error("CREATE POST ERROR:", err);
-    res.status(500).json({ message: "Cannot create post" });
-  }
-});
-
+  },
+);
 
 //puts
 app.put("/api/posts/:id/like", authMiddleware, async (req, res) => {
@@ -231,6 +249,87 @@ app.put("/api/posts/:id/dislike", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Error toggling dislike" });
   }
 });
+
+app.put("/api/posts/:id", authMiddleware, async (req, res) => {
+  try {
+    const { body } = req.body;
+    if (!body || !body.trim()) {
+      return res.status(400).json({
+        message: "Body is required",
+      });
+    }
+
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Post not found.",
+      });
+    }
+
+    if (post.userId.toString() !== req.user.id.toString()) {
+      return res.status(403).json({
+        message: "Unauthorized",
+      });
+    }
+
+    const scores = await getToxicityScore(`${post.title}. ${body}`);
+
+    if (scores && scores.toxicity > 0.8) {
+      return res.status(400).json({
+        message: "AI MODERATION: POST FLAGGED FOR HIGH TOXICITY",
+      });
+    }
+
+    post.body = body.trim();
+    post.isEdited = true
+
+    await post.save();
+
+    const populatedPost = await post.populate(
+      "userId",
+      "username profilePic subscriptionStatus subscriptionTier"
+    )
+
+    res.status(200).json(populatedPost);
+  } catch (err) {
+    console.error("UPDATE BODY ERROR:", err);
+
+    res.status(500).json({
+      message: "Cannot update post body",
+    });
+  }
+});
+
+app.delete("/api/posts/:id", authMiddleware, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id)
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Cannot find post"
+      })
+    }
+
+    if (post.userId.toString() !== req.user.id.toString()) {
+      return res.status(403).json({
+        message: "Unauthorized"
+      })
+    }
+
+    await Post.findByIdAndDelete(req.params.id)
+
+    res.status(200).json({
+      message: "Post deleted successfully"
+    })
+  } catch (err) {
+    console.error("DELETE POST ERROR:", err)
+
+    res.status(500).json({
+      message: "Cannot delete post."
+    })
+  }
+})
 
 const PORT = process.env.PORT || 5000;
 

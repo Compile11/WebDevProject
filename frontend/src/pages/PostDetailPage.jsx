@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getPostById } from "../api/posts";
+import { getPostById, updatePost } from "../api/posts";
 import CommentsSection from "../components/CommentsSection";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { togglePostLike, togglePostDislike } from "../api/votes";
 import { useAuth } from "../context/AuthContext";
 import MarkdownPost from "../components/ui/MarkdownPost";
 import SubscriptionBadge from "../components/subscription/SubscriptionBadge";
+import MarkdownEditor from "../components/ui/MarkdownEditor";
+import DeleteModal from "./DeleteModal";
 
 export default function PostDetailPage({ setTitle }) {
   const { postId } = useParams();
@@ -14,9 +16,20 @@ export default function PostDetailPage({ setTitle }) {
 
   const [post, setPost] = useState(null);
   const [error, setError] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedBody, setEditedBody] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const [likes, setLikes] = useState([]);
   const [dislikes, setDislikes] = useState([]);
+
+  const isMyPost = post?.userId._id === currentUser?.id;
+
+  const isEdited = post?.isEdited;
+
+  console.log("is edited:", isEdited);
+
+  console.log("is my post:", isMyPost);
 
   useEffect(() => {
     async function fetchPost() {
@@ -32,6 +45,7 @@ export default function PostDetailPage({ setTitle }) {
       setTitle(res.data.title);
       setLikes(res.data.likes || []);
       setDislikes(res.data.dislikes || []);
+      setEditedBody(res.data.body);
     }
 
     fetchPost();
@@ -49,6 +63,18 @@ export default function PostDetailPage({ setTitle }) {
       setDislikes(data.dislikes);
     } catch (err) {
       console.error("Voting failed:", err);
+    }
+  };
+
+  const handleEdit = async () => {
+    try {
+      const response = await updatePost(editedBody, post._id);
+
+      setPost(response.data);
+      setEditedBody(response.data.body);
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Failed to edit post:", err);
     }
   };
 
@@ -106,45 +132,95 @@ export default function PostDetailPage({ setTitle }) {
               </div>
             </div>
 
-            {/* Right: Timestamp */}
-            <span className="text-gray-500 text-sm">
-              {new Date(post.createdAt).toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </span>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              {/* Right: Timestamp */}
+              <span>
+                {new Date(post.createdAt).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
+              {isEdited && (
+                <span className="italic text-gray-400">(edited)</span>
+              )}
+            </div>
           </div>
 
           {/* Bottom of Header: Votes */}
-          <div className="mt-8 flex gap-4 text-sm text-gray-400 font-medium">
-            <button
-              onClick={() => handleVote("like")}
-              className={`flex items-center gap-1.5 transition cursor-pointer ${hasLiked ? "text-blue-500" : "text-gray-700 dark:text-gray-400 hover:text-gray-500 dark:hover:text-gray-200"}`}
-            >
-              <ThumbsUp size={18} fill={hasLiked ? "currentColor" : "none"} />
-              <span>Likes: {likes.length}</span>
-            </button>
-
-            <div className="border-l dark:border-gray-700 pl-4">
+          <div className="mt-8 flex items-center text-sm text-gray-400 font-medium">
+            <div className="flex gap-4">
               <button
-                onClick={() => handleVote("dislike")}
-                className={`flex items-center gap-1.5 transition cursor-pointer ${hasDisliked ? "text-red-500" : "text-gray-700 dark:text-gray-400 hover:text-gray-500 dark:hover:text-gray-200"}`}
+                onClick={() => handleVote("like")}
+                className={`flex items-center gap-1.5 transition cursor-pointer ${hasLiked ? "text-blue-500" : "text-gray-700 dark:text-gray-400 hover:text-gray-500 dark:hover:text-gray-200"}`}
               >
-                <ThumbsDown
-                  size={18}
-                  fill={hasDisliked ? "currentColor" : "none"}
-                />
-                <span>Dislikes: {dislikes.length}</span>
+                <ThumbsUp size={18} fill={hasLiked ? "currentColor" : "none"} />
+                <span>Likes: {likes.length}</span>
               </button>
+
+              <div className="border-l dark:border-gray-700 pl-4">
+                <button
+                  onClick={() => handleVote("dislike")}
+                  className={`flex items-center gap-1.5 transition cursor-pointer ${hasDisliked ? "text-red-500" : "text-gray-700 dark:text-gray-400 hover:text-gray-500 dark:hover:text-gray-200"}`}
+                >
+                  <ThumbsDown
+                    size={18}
+                    fill={hasDisliked ? "currentColor" : "none"}
+                  />
+                  <span>Dislikes: {dislikes.length}</span>
+                </button>
+              </div>
             </div>
+
+            {isMyPost && (
+              <div className="ml-auto flex gap-4">
+                {!isEditing ? (
+                  <>
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className="text-white p-2 rounded-md bg-blue-500 hover:bg-blue-400 cursor-pointer transition-all"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="text-white p-2 rounded-md bg-red-500 hover:bg-red-400 cursor-pointer transition-all"
+                      onClick={() => setShowDeleteModal(true)}
+                    >
+                      Delete
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={handleEdit}
+                      className="text-white p-2 rounded-md bg-green-500 hover:bg-green-400 cursor-pointer transition-all"
+                    >
+                      Done
+                    </button>
+                    <button
+                      className="text-white p-2 rounded-md bg-red-500 hover:bg-red-400 cursor-pointer transition-all"
+                      onClick={() => {
+                        setIsEditing(false);
+                        setEditedBody(post.body);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
         {/* --- Bottom Part: The Body (Separated by a border) --- */}
         <div className="border-t-[3px]  border-gray-400 dark:border-gray-700 p-8 min-h-[150px] ">
           <div className="prose prose-invert max-w-none">
-            <MarkdownPost content={post.body} />
+            {isEditing ? (
+              <MarkdownEditor content={editedBody} setContent={setEditedBody} />
+            ) : (
+              <MarkdownPost content={post.body} />
+            )}
           </div>
         </div>
       </div>
@@ -163,6 +239,8 @@ export default function PostDetailPage({ setTitle }) {
       <div className="border-[3px] border-gray-400 dark:border-gray-700 bg-gray-200 dark:bg-[#222428] rounded-lg p-6">
         <CommentsSection postId={post._id} />
       </div>
+
+      {showDeleteModal && <DeleteModal setShowDeleteModal={setShowDeleteModal} postId={post._id} />}
     </div>
   );
 }

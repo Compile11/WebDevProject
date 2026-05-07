@@ -10,9 +10,9 @@ const postSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    image:{
-        type: String,
-        default: null
+    image: {
+      type: String,
+      default: null,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -23,9 +23,10 @@ const postSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-      flair: {type:String, default:"Q & A"},
-      likes: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}],
-      dislikes: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}],
+    flair: { type: String, default: "Q & A" },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    dislikes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    isEdited: { type: Boolean, deafult: false }
   },
   { timestamps: true },
 );

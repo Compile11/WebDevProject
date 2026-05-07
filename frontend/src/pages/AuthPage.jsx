@@ -17,7 +17,7 @@ export default function AuthPage() {
         <ArrowLeft />
       </div>
       <div
-        className={`${isForgotPassword ? "w-full" : "w-1/2"} flex justify-center items-center h-full bg-gray-50 dark:bg-gray-800 transition-all duration-300`}
+        className={`${isForgotPassword ? "w-full" : "w-full md:w-1/2"} px-6 flex justify-center items-center h-full bg-gray-50 dark:bg-gray-800 transition-all duration-300`}
       >
         {!isForgotPassword ? (
           <LoginSignup setIsForgotPassword={setIsForgotPassword} />
@@ -27,7 +27,7 @@ export default function AuthPage() {
       </div>
 
       <div
-        className={`${isForgotPassword ? "w-0" : "w-1/2"} relative h-full dark:opacity-75 transition-all duration-300`}
+        className={`${isForgotPassword ? "w-0" : "w-0 md:w-1/2"} relative h-full dark:opacity-75 transition-all duration-300`}
       >
         <img
           src="/AuthPageCover.jpg"

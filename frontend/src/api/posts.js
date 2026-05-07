@@ -2,7 +2,9 @@ import { apiClient } from "./client";
 
 export async function getAllPosts(page, limit) {
   try {
-    const response = await apiClient.get(`/api/posts?page=${page}&limit=${limit}`);
+    const response = await apiClient.get(
+      `/api/posts?page=${page}&limit=${limit}`,
+    );
     return { data: response.data, error: null };
   } catch (error) {
     console.error("Error fetching posts:", error);
@@ -64,6 +66,33 @@ export async function createNewPost(formData) {
     const response = await apiClient.post("/api/posts", formData);
     return { data: response.data, error: null };
   } catch (error) {
-    return { data: null, error: error.response?.data?.message || "Failed to create post" };
+    return {
+      data: null,
+      error: error.response?.data?.message || "Failed to create post",
+    };
+  }
+}
+
+export async function updatePost(body, postId) {
+  try {
+    const response = await apiClient.put(`/api/posts/${postId}`, { body });
+
+    return { data: response.data };
+  } catch (err) {
+    return {
+      error: err.response?.data?.message || "Failed to edit post",
+    };
+  }
+}
+
+export async function deletePost(postId) {
+  try {
+    const response = await apiClient.delete(`/api/posts/${postId}`);
+
+    return { data: response.data };
+  } catch (err) {
+    return {
+      error: err.response?.data?.message || "Failed to delete post.",
+    };
   }
 }
