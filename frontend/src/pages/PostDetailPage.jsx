@@ -67,6 +67,11 @@ export default function PostDetailPage({ setTitle }) {
   };
 
   const handleEdit = async () => {
+    if (editedBody.trim() === post.body.trim()) {
+      setIsEditing(false)
+      return
+    }
+
     try {
       const response = await updatePost(editedBody, post._id);
 
