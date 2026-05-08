@@ -2,6 +2,7 @@
 .env
 .env.*
 google-credentials.json
+*.log
 
 # Node Modules
 node_modules/

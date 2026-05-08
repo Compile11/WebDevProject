@@ -1,5 +1,6 @@
 const express = require("express");
 const Comment = require("../models/Comment");
+const Post = require("../models/Post");
 const authMiddleware = require("../middleware/authMiddleware");
 const {getToxicityScore} = require("../utils/moderator");
 
@@ -49,7 +50,9 @@ router.post("/", authMiddleware, async (req, res) => {
     });
 
     const savedComment = await newComment.save();
-    const populatedComment = await savedComment.populate("userId", "username email")
+    await Post.findByIdAndUpdate(postId, {$inc: {commentCount:1}});
+
+    const populatedComment = await savedComment.populate("userId", "username email");
 
     res.status(201).json(populatedComment);
   } catch (err) {

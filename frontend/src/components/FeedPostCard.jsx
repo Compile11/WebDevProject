@@ -139,6 +139,7 @@ export default function FeedPostCard({ post }) {
         <div className="flex items-center gap-1.5 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
           <MessageSquare size={14} />
           <span>Reply</span>
+          <span>{post.commentCount||0}</span>
         </div>
 
         {/* FIXED: The duplicate key error is solved by adding the index to the key */}
