@@ -1,5 +1,6 @@
 const express = require("express");
 const Comment = require("../models/Comment");
+const adminMiddleware = require("../middleware/adminMiddleware");
 const Post = require("../models/Post");
 const authMiddleware = require("../middleware/authMiddleware");
 const {getToxicityScore} = require("../utils/moderator");
@@ -102,5 +103,22 @@ router.put("/:commentId/dislike", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Error toggling comment dislike" });
   }
 });
+
+router.delete("/:commentId/", authMiddleware, adminMiddleware, async (req, res) => {
+  try{
+    const comment = await Comment.findById(req.params.commentId);
+    if (!comment) return res.status(404).json({ message: "Comment not found" });
+
+    const postId = comment.postId;
+    await Comment.findByIdAndDelete(req.params.commentId);
+
+    await Post.findByIdAndUpdate(postId, { $inc: { commentCount: -1 } });
+
+    res.status(200).json({ message: "Comment deleted successfully" });
+
+  }catch(err){
+    res.status(500).json({ message: "Error deleting comment" });
+  }
+})
 
 module.exports = router;
