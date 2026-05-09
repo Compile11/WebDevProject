@@ -73,6 +73,16 @@ export default function CommentsSection({ postId }) {
               key={comment._id}
               className="bg-gray-300 dark:bg-gray-800 p-3 rounded-lg border border-gray-400 dark:border-gray-700"
             >
+              {currentUser?.role === 'admin' && (
+                  <button
+                      onClick={() => {
+                        if(window.confirm("Delete comment?")) deleteComment(comment._id).then(() => window.location.reload());
+                      }}
+                      className="text-red-500 hover:text-red-700"
+                  >
+                    <Trash2 size={14} />
+                  </button>
+              )}
               <span className="text-blue-400 font-bold text-sm mr-2">
                 {comment.userId?.username}
               </span>

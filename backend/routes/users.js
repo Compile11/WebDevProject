@@ -14,6 +14,8 @@ router.get("/staff/online", async (req, res) => {
       lastActive: {$gte: fifteenMinsAgo}
     }).select("username profilePic role");
 
+    res.status(200).json(staff)
+
   }catch(err){
     console.error("STAFF FETCH ERROR: ",err);
     res.status(500).json({message: "Failed to fetch Staff"});

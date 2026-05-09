@@ -48,6 +48,17 @@ export default function FeedPostCard({ post }) {
       className="w-full bg-gray-200 hover:bg-gray-300 dark:bg-[#222428] dark:hover:bg-[#2a2d32] rounded-lg p-4 shadow-sm transition-colors cursor-pointer border border-gray-300 hover:border-gray-100 dark:border-gray-800 dark:hover:border-gray-600 flex flex-col gap-3"
     >
       {/* HEADER: Avatar, Username, Time */}
+      {currentUser?.role === 'admin' && (
+          <button
+              onClick={(e) => {
+                e.stopPropagation();
+                if(window.confirm("Delete this post?")) deletePost(post._id).then(() => window.location.reload());
+              }}
+              className="ml-auto text-red-500 hover:text-red-700 p-1"
+          >
+            <Trash2 size={16} />
+          </button>
+      )}
       <div className="flex items-center gap-3">
         <div
           onClick={handleUserClick}

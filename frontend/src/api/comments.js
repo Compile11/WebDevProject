@@ -20,3 +20,7 @@ export async function createComment({ postId, text }) {
     throw err.response?.data || { message: "Failed to create comment" };
   }
 }
+
+export async function deleteComment(commentId) {
+  return await apiClient.delete(`/api/comments/${commentId}`);
+}

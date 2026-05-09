@@ -86,13 +86,5 @@ export async function updatePost(body, postId) {
 }
 
 export async function deletePost(postId) {
-  try {
-    const response = await apiClient.delete(`/api/posts/${postId}`);
-
-    return { data: response.data };
-  } catch (err) {
-    return {
-      error: err.response?.data?.message || "Failed to delete post.",
-    };
-  }
+  return await apiClient.delete(`/api/posts/${postId}`);
 }
