@@ -113,18 +113,18 @@ export default function AdminDashboard() {
       )}
 
       <div className="pb-6 w-1/3">
-        <div className="relative flex items-center gap-2 bg-gray-300 pl-2 rounded-lg h-12">
+        <div className="relative flex items-center gap-2 bg-gray-300 dark:bg-gray-800 pl-2 rounded-lg h-12">
           <input
             type="text"
             id="search"
             placeholder=" "
             value={filter}
-            className="text-gray-800 peer w-full focus:outline-none pt-4"
+            className="text-gray-800 dark:text-gray-300 peer w-full focus:outline-none pt-4"
             onChange={(e) => setFilter(e.target.value)}
           />
           <label
             htmlFor="search"
-            className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-600 transition-all peer-focus:top-2 peer-focus:text-xs peer-focus:translate-y-0 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-xs peer-not-placeholder-shown:translate-y-0"
+            className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-500 transition-all peer-focus:top-2 peer-focus:text-xs peer-focus:translate-y-0 peer-not-placeholder-shown:top-2 peer-not-placeholder-shown:text-xs peer-not-placeholder-shown:translate-y-0"
           >
             Search...
           </label>

@@ -48,17 +48,6 @@ export default function FeedPostCard({ post }) {
       className="w-full bg-gray-200 hover:bg-gray-300 dark:bg-[#222428] dark:hover:bg-[#2a2d32] rounded-lg p-4 shadow-sm transition-colors cursor-pointer border border-gray-300 hover:border-gray-100 dark:border-gray-800 dark:hover:border-gray-600 flex flex-col gap-3"
     >
       {/* HEADER: Avatar, Username, Time */}
-      {currentUser?.role === 'admin' && (
-          <button
-              onClick={(e) => {
-                e.stopPropagation();
-                if(window.confirm("Delete this post?")) deletePost(post._id).then(() => window.location.reload());
-              }}
-              className="ml-auto text-red-500 hover:text-red-700 p-1"
-          >
-            <Trash2 size={16} />
-          </button>
-      )}
       <div className="flex items-center gap-3">
         <div
           onClick={handleUserClick}
@@ -93,27 +82,39 @@ export default function FeedPostCard({ post }) {
             <span>{formatTime(post.createdAt)}</span>
           </div>
         </div>
+
+        {currentUser?.role === "admin" && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              if (window.confirm("Delete this post?"))
+                deletePost(post._id).then(() => window.location.reload());
+            }}
+            className="ml-auto text-red-500 hover:text-red-400 dark:hover:text-red-700 hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded-md cursor-pointer"
+          >
+            <Trash2 size={16} />
+          </button>
+        )}
       </div>
 
-        {/* BODY SNIPPET */}
-        <div className="text-sm text-gray-700 dark:text-gray-300 ml-13 line-clamp-2 overflow-hidden">
-          <MarkdownPost content={post.body} compact />
+      {/* BODY SNIPPET */}
+      <div className="text-sm text-gray-700 dark:text-gray-300 ml-13 line-clamp-2 overflow-hidden">
+        <MarkdownPost content={post.body} compact />
+      </div>
+
+      {/* NEW: POST IMAGE (Feed Preview) */}
+      {post.image && (
+        <div className="ml-13 mt-3 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900/50 flex justify-center">
+          <img
+            src={post.image}
+            alt="Post content"
+            className="max-h-80 w-auto object-contain"
+          />
         </div>
+      )}
 
-        {/* NEW: POST IMAGE (Feed Preview) */}
-        {post.image && (
-            <div className="ml-13 mt-3 rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900/50 flex justify-center">
-              <img
-                  src={post.image}
-                  alt="Post content"
-                  className="max-h-80 w-auto object-contain"
-              />
-            </div>
-        )}
-
-        {/* FLAIR AND TAGS COMBINED */}
-        <div className="ml-auto flex gap-2 items-center">
-
+      {/* FLAIR AND TAGS COMBINED */}
+      <div className="ml-auto flex gap-2 items-center">
         {/* Render up to 2 standard free-text tags */}
         {post.tags &&
           post.tags.length > 0 &&
@@ -150,7 +151,7 @@ export default function FeedPostCard({ post }) {
         <div className="flex items-center gap-1.5 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
           <MessageSquare size={14} />
           <span>Reply</span>
-          <span>{post.commentCount||0}</span>
+          <span>{post.commentCount || 0}</span>
         </div>
 
         {/* FIXED: The duplicate key error is solved by adding the index to the key */}

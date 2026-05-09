@@ -91,6 +91,19 @@ export default function SettingsPage() {
       }
     }
   };
+  const cardClass =
+    "bg-gray-300 dark:bg-gray-800 rounded-lg shadow-lg border border-gray-300 dark:border-gray-700 overflow-hidden";
+
+  const cardHeaderClass =
+    "bg-gray-200 dark:bg-gray-900/50 p-4 border-b border-gray-300 dark:border-gray-700 flex items-center gap-2";
+
+  const headingClass = "text-lg font-bold text-gray-900 dark:text-white";
+
+  const labelClass =
+    "block text-gray-700 dark:text-gray-400 text-sm font-bold mb-2";
+
+  const inputClass =
+    "w-full p-2.5 bg-gray-100 dark:bg-gray-900 border border-gray-400 dark:border-gray-600 rounded text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500";
 
   return (
     <div className="max-w-3xl mx-auto mt-10 px-4 pb-20 space-y-8">
@@ -106,20 +119,20 @@ export default function SettingsPage() {
         </div>
       )}
 
-      <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 overflow-hidden">
-        <div className="bg-gray-900/50 p-4 border-b border-gray-700 flex items-center gap-2">
-          <Mail className="text-blue-400" size={20} />
-          <h2 className="text-lg font-bold text-white">Update Email</h2>
+      <div className={cardClass}>
+        <div className={cardHeaderClass}>
+          <Mail className="text-blue-600 dark:text-blue-400" size={20} />
+          <h2 className={headingClass}>Update Email</h2>
         </div>
 
         <form onSubmit={handleEmailChange} className="p-6 space-y-4">
-          <p className="text-sm text-gray-400 mb-4">
+          <p className="text-sm text-gray-700 dark:text-gray-400 mb-4">
             Current Email:{" "}
-            <span className="font-bold text-gray-200">{currentUser.email}</span>
+            <span className="font-bold text-gray-900 dark:text-gray-200">{currentUser.email}</span>
           </p>
 
           <div>
-            <label className="block text-gray-400 text-sm font-bold mb-2">
+            <label className={labelClass}>
               New Email Address
             </label>
             <input
@@ -128,12 +141,12 @@ export default function SettingsPage() {
               onChange={(e) => setNewEmail(e.target.value)}
               required
               placeholder="new@university.edu"
-              className="w-full p-2.5 bg-gray-900 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
             />
           </div>
 
           <div>
-            <label className="block text-gray-400 text-sm font-bold mb-2">
+            <label className={labelClass}>
               Confirm with Password
             </label>
             <input
@@ -142,7 +155,7 @@ export default function SettingsPage() {
               onChange={(e) => setEmailPassword(e.target.value)}
               required
               placeholder="Enter your current password"
-              className="w-full p-2.5 bg-gray-900 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
             />
           </div>
 
@@ -156,15 +169,15 @@ export default function SettingsPage() {
         </form>
       </div>
 
-      <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 overflow-hidden">
-        <div className="bg-gray-900/50 p-4 border-b border-gray-700 flex items-center gap-2">
-          <Lock className="text-blue-400" size={20} />
-          <h2 className="text-lg font-bold text-white">Change Password</h2>
+      <div className={cardClass}>
+        <div className={cardHeaderClass}>
+          <Lock className="text-blue-600 dark:text-blue-400" size={20} />
+          <h2 className={headingClass}>Change Password</h2>
         </div>
 
         <form onSubmit={handlePasswordChange} className="p-6 space-y-4">
           <div>
-            <label className="block text-gray-400 text-sm font-bold mb-2">
+            <label className={labelClass}>
               Current Password
             </label>
             <input
@@ -172,12 +185,12 @@ export default function SettingsPage() {
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
               required
-              className="w-full p-2.5 bg-gray-900 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
             />
           </div>
 
           <div>
-            <label className="block text-gray-400 text-sm font-bold mb-2">
+            <label className={labelClass}>
               New Password
             </label>
             <input
@@ -185,12 +198,12 @@ export default function SettingsPage() {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               required
-              className="w-full p-2.5 bg-gray-900 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
             />
           </div>
 
           <div>
-            <label className="block text-gray-400 text-sm font-bold mb-2">
+            <label className={labelClass}>
               Confirm New Password
             </label>
             <input
@@ -198,7 +211,7 @@ export default function SettingsPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full p-2.5 bg-gray-900 border border-gray-600 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
             />
           </div>
 
@@ -217,18 +230,26 @@ export default function SettingsPage() {
         isLoading={isLoading}
         setIsLoading={setIsLoading}
         displayMessage={displayMessage}
+
+        cardClass={cardClass}
+        cardHeaderClass={cardHeaderClass}
+        headingClass={headingClass}
       />
 
-      <div className="bg-red-900/10 rounded-lg shadow-lg border border-red-900/50 overflow-hidden">
-        <div className="bg-red-900/20 p-4 border-b border-red-900/50 flex items-center gap-2">
-          <AlertTriangle className="text-red-500" size={20} />
-          <h2 className="text-lg font-bold text-red-500">Danger Zone</h2>
+      <div className="bg-red-100 dark:bg-red-900/10 rounded-lg shadow-lg border border-red-300 dark:border-red-900/50 overflow-hidden">
+        <div className="bg-red-200 dark:bg-red-900/20 p-4 border-b border-red-300 dark:border-red-900/50 flex items-center gap-2">
+          <AlertTriangle className="text-red-700 dark:text-red-500" size={20} />
+          <h2 className="text-lg font-bold text-red-800 dark:text-red-500">
+            Danger Zone
+          </h2>
         </div>
 
         <div className="p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div>
-            <h3 className="text-white font-bold mb-1">Delete Account</h3>
-            <p className="text-gray-400 text-sm">
+            <h3 className="text-gray-900 dark:text-white font-bold mb-1">
+              Delete Account
+            </h3>
+            <p className="text-gray-700 dark:text-gray-400 text-sm">
               Once you delete your account, there is no going back. Please be
               certain.
             </p>
@@ -236,7 +257,7 @@ export default function SettingsPage() {
 
           <button
             onClick={handleDeleteAccount}
-            className="bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white border border-red-600 font-bold py-2 px-6 rounded transition whitespace-nowrap cursor-pointer"
+            className="bg-red-200 hover:bg-red-600 dark:bg-red-600/20 dark:hover:bg-red-600 text-red-800 hover:text-white dark:text-red-500 dark:hover:text-white border border-red-300 dark:border-red-600 font-bold py-2 px-6 rounded transition whitespace-nowrap cursor-pointer"
           >
             Delete Account
           </button>

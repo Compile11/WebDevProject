@@ -2,12 +2,17 @@ import { manageSubscription } from "../../api/manageSubscription";
 import SubscriptionBadge from "./SubscriptionBadge";
 import DeveloperButton from "./DeveloperButton";
 import MaintainerButton from "./MaintainerButton";
+import { CreditCard } from "lucide-react";
 
 export default function SubscriptionPanel({
   currentUser,
   isLoading,
   setIsLoading,
   displayMessage,
+
+  cardClass,
+  cardHeaderClass,
+  headingClass
 }) {
   const tierDisplay = {
     free: "Free",
@@ -72,15 +77,16 @@ export default function SubscriptionPanel({
   };
 
   return (
-    <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 overflow-hidden">
-      <div className="bg-gray-900/50 p-4 border-b border-gray-700 flex items-center gap-2">
-        <h2 className="text-lg font-bold text-white">Subscription</h2>
+    <div className={cardClass}>
+      <div className={cardHeaderClass}>
+        <CreditCard className="text-blue-600 dark:text-blue-400" size={20} />
+        <h2 className={headingClass}>Subscription</h2>
       </div>
 
       <div className="p-6 space-y-4">
-        <div className="text-sm text-gray-400 flex items-center gap-2">
+        <div className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
           Current Plan:{" "}
-          <span className="font-bold text-gray-200">{currentPlanLabel}</span>
+          <span className="font-bold text-gray-600 dark:text-gray-200">{currentPlanLabel}</span>
           <SubscriptionBadge user={currentUser} />
         </div>
 
