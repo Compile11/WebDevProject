@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { getComments, createComment } from "../api/comments";
+import { Trash2 } from "lucide-react";
 
 export default function CommentsSection({ postId }) {
   // 1. All hooks must live right here at the top of the component
