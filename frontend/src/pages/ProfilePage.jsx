@@ -33,7 +33,7 @@ export default function ProfilePage() {
     loadUserPosts();
   }, [currentUser]);
 
-  if (authLoading) return <div className="text-white p-10">Loading...</div>;
+  if (authLoading) return <div className="text-gray-900 dark:text-white p-10">Loading...</div>;
   if (!currentUser) return <Navigate to="/" />;
 
   const hasChanges =
@@ -68,19 +68,19 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] text-gray-200 px-2 pb-20">
+    <div className="min-h-[calc(100vh-64px)] text-gray-800 dark:text-gray-200 px-2 pb-20">
       <div className="max-w-3xl mx-auto mt-8">
         {/* Display Status Messages */}
         {message && (
           <div
-            className={`p-3 mb-4 text-sm rounded border ${message.startsWith("ERROR") ? "bg-red-900/50 text-red-400 border-red-800" : "bg-blue-900/50 text-blue-400 border-blue-800"}`}
+            className={`p-3 mb-4 text-sm rounded border ${message.startsWith("ERROR") ? "bg-red-50 text-red-700 border-red-200 dark:bg-red-900/50 dark:text-red-400 dark:border-red-800" : "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/50 dark:text-blue-400 dark:border-blue-800"}`}
           >
             {message}
           </div>
         )}
 
         {/* Profile Identity Card */}
-        <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6 mb-8 flex items-center gap-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-8 flex items-center gap-6">
           {/* AVATAR CONTAINER */}
           <div className="shrink-0 w-24 h-24 sm:w-32 sm:h-32">
             {isEditing ? (
@@ -149,13 +149,13 @@ export default function ProfilePage() {
                   type="text"
                   value={usernameField}
                   onChange={(e) => setUsernameField(e.target.value)}
-                  className="p-2 bg-gray-900 border border-gray-600 rounded text-white focus:ring-2 focus:ring-blue-500 font-bold"
+                  className="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 font-bold"
                 />
                 <textarea
                   value={bioField}
                   onChange={(e) => setBioField(e.target.value)}
                   placeholder="Bio..."
-                  className="p-2 bg-gray-900 border border-gray-600 rounded text-white text-sm h-20"
+                  className="p-2 bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded text-gray-900 dark:text-white text-sm h-20"
                 />
                 <div className="flex gap-2 mt-2">
                   <button
@@ -177,7 +177,7 @@ export default function ProfilePage() {
               </div>
             ) : (
               <div>
-                <h2 className="text-2xl font-bold text-white mb-1 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1 flex items-center gap-2">
                   <span>{currentUser.username}</span>
                   <SubscriptionBadge user={currentUser} />
                   {currentUser.isVerified && (
@@ -188,11 +188,11 @@ export default function ProfilePage() {
                     />
                   )}
                 </h2>
-                <p className="text-gray-400 mb-4">{currentUser.email}</p>
-                <p className="text-gray-300 text-sm italic border-l-2 border-blue-500 pl-3">
+                <p className="text-gray-500 dark:text-gray-400 mb-4">{currentUser.email}</p>
+                <p className="text-gray-700 dark:text-gray-300 text-sm italic border-l-2 border-blue-500 pl-3">
                   {currentUser?.bio || "Add a bio!"}
                 </p>
-                <span className="inline-block mt-4 bg-gray-700 text-xs font-semibold px-3 py-1 rounded-full text-gray-300">
+                <span className="inline-block mt-4 bg-gray-100 dark:bg-gray-700 text-xs font-semibold px-3 py-1 rounded-full text-gray-700 dark:text-gray-300">
                   Compile Member
                 </span>
               </div>
@@ -201,19 +201,19 @@ export default function ProfilePage() {
         </div>
 
         {/* User Activity Feed */}
-        <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6 mb-12">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 p-6 mb-12">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-semibold text-white">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
               Your Recent Posts
             </h3>
-            <span className="bg-blue-900 text-blue-300 text-xs font-bold px-3 py-1 rounded-full">
+            <span className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 text-xs font-bold px-3 py-1 rounded-full">
               {myPosts.length} Posts
             </span>
           </div>
 
           <div className="space-y-4">
             {isLoadingPosts ? (
-              <p className="text-gray-400 text-sm">Loading activity...</p>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">Loading activity...</p>
             ) : myPosts.length === 0 ? (
               <p className="text-gray-500 text-sm italic">No posts yet.</p>
             ) : (
