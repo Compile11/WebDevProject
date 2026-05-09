@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { formatTime } from "../utils/formatTime";
 import { useNavigate } from "react-router-dom";
-import { MessageSquare, ThumbsUp, ThumbsDown } from "lucide-react";
+import { MessageSquare, ThumbsUp, ThumbsDown, Trash2 } from "lucide-react";
 import { togglePostLike, togglePostDislike } from "../api/votes";
 import { useAuth } from "../context/AuthContext";
 import { getFlairStyle } from "../utils/flairColors";

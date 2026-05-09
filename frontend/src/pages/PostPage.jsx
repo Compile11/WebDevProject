@@ -75,32 +75,32 @@ export default function PostPage() {
           onChange={(e) =>
             setPostData((prev) => ({ ...prev, title: e.target.value }))
           }
-          className="border rounded px-3 py-2"
+          className="border rounded px-3 py-2 text-gray-800 dark:text-gray-200 placeholder-gray-500"
           required
         />
         {/*Dropdown for preset flair */}
         <select
         value = {postData.flair}
         onChange={(e) => setPostData((prev) => ({ ...prev, flair: e.target.value }))}
-        className="border border-gray-600 bg-gray-800 text-white rounded px-3 py-2 cursor-pointer focus:outline-none focus:border-blue-500"
+        className="border border-gray-600 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-white rounded px-3 py-2 cursor-pointer focus:outline-none focus:border-blue-500"
         >
           {["Q & A", "Articles", "Object-Oriented", "OS & Kernels", "Game Dev"].map(flair => (
               <option key={flair} value={flair}>{flair}</option>
           ))}
         </select>
 
-        <div className="flex flex-col gap-2 border border-gray-600 bg-gray-800 rounded px-3 py-3">
-          <label className="text-sm font-semibold text-gray-300">
+        <div className="flex flex-col gap-2 border border-gray-600 bg-gray-200 dark:bg-gray-800 rounded px-3 py-3">
+          <label className="text-sm font-semibold text-gray-800 dark:text-gray-300">
             Attach Image (Optional)
           </label>
           <input
               type="file"
               accept="image/*"
               onChange={(e) => setImageFile(e.target.files[0])}
-              className="text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600/20 file:text-blue-400 hover:file:bg-blue-600/30 transition cursor-pointer"
+              className="text-sm text-gray-900 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-300 hover:file:bg-blue-400 dark:file:bg-blue-600/20 dark:file:text-blue-400 dark:hover:file:bg-blue-600/30 transition cursor-pointer"
           />
           {imageFile && (
-              <div className="text-xs text-green-400 mt-1">
+              <div className="text-xs text-green-600 dark:text-green-400 mt-1">
                 Ready to upload: {imageFile.name}
               </div>
           )}

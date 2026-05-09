@@ -45,13 +45,13 @@ export default function MarkdownEditor({ content, setContent }) {
   };
 
   return (
-    <div className="border border-gray-700 rounded-lg bg-gray-900">
+    <div className="border border-gray-700 rounded-lg bg-gray-400 dark:bg-gray-900">
       
-      <div className="flex flex-wrap gap-1 p-2 border-b border-gray-700 bg-gray-800 rounded-t-lg">
+      <div className="flex flex-wrap gap-1 p-2 border-b border-gray-700 bg-gray-200 dark:bg-gray-800 rounded-t-lg">
 
         <button type="button"
           onClick={() => applyFormat("**", "**")}
-          className="p-2 hover:bg-gray-700 rounded"
+          className="p-2 hover:bg-gray-300 dark:hover:bg-gray-700 rounded cursor-pointer"
           title="Bold"
         >
           <Bold size={16} />
@@ -59,7 +59,7 @@ export default function MarkdownEditor({ content, setContent }) {
 
         <button type="button"
           onClick={() => applyFormat("*", "*")}
-          className="p-2 hover:bg-gray-700 rounded"
+          className="p-2 hover:bg-gray-300 dark:hover:bg-gray-700 rounded cursor-pointer"
           title="Italic"
         >
           <Italic size={16} />
@@ -67,7 +67,7 @@ export default function MarkdownEditor({ content, setContent }) {
 
         <button type="button"
           onClick={() => applyFormat("~~", "~~")}
-          className="p-2 hover:bg-gray-700 rounded"
+          className="p-2 hover:bg-gray-300 dark:hover:bg-gray-700 rounded cursor-pointer"
           title="Strikethrough"
         >
           <Strikethrough size={16} />
@@ -77,7 +77,7 @@ export default function MarkdownEditor({ content, setContent }) {
 
         <button type="button"
           onClick={() => applyFormat("`", "`")}
-          className="p-2 hover:bg-gray-700 rounded"
+          className="p-2 hover:bg-gray-300 dark:hover:bg-gray-700 rounded cursor-pointer"
           title="Inline Code"
         >
           <Code size={16} />
@@ -85,20 +85,20 @@ export default function MarkdownEditor({ content, setContent }) {
 
         <button type="button"
           onClick={() => applyFormat("\n```insert_language\n", "\n```\n")}
-          className="p-2 hover:bg-gray-700 rounded text-xs font-mono"
+          className="p-2 hover:bg-gray-300 dark:hover:bg-gray-700 rounded text-xs font-mono cursor-pointer"
           title="Code Block"
         >
           {"</>"}
         </button>
       </div>
 
-      <div className="border border-gray-700 rounded bg-gray-900 px-3 py-2 min-h-[150px] flex">
+      <div className="border border-gray-200 dark:border-gray-700 rounded bg-gray-200 dark:bg-gray-900 px-3 py-2 min-h-[150px] flex">
         <textarea
           ref={textareaRef}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Body"
-          className="flex-1 bg-transparent text-gray-100 outline-none resize-none leading-relaxed"
+          className="flex-1 bg-transparent text-gray-800 dark:text-gray-100 outline-none resize-none leading-relaxed"
           required
         />
       </div>

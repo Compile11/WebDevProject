@@ -153,7 +153,7 @@ export default function HomePage() {
               {Array.from({ length: 10 }).map((_, i) => (
                 <div
                   key={i}
-                  className="w-full h-[74px] bg-gray-800 rounded-md animate-pulse"
+                  className="w-full h-[74px] bg-gray-300 dark:bg-gray-800 rounded-md animate-pulse"
                 />
               ))}
             </div>
