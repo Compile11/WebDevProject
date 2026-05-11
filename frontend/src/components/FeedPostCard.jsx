@@ -166,20 +166,6 @@ export default function FeedPostCard({ post, setPosts }) {
           <span>Reply</span>
           <span>{post.commentCount || 0}</span>
         </div>
-
-        {/* FIXED: The duplicate key error is solved by adding the index to the key */}
-        {post.tags && post.tags.length > 0 && (
-          <div className="ml-auto flex gap-2">
-            {post.tags.slice(0, 2).map((tag, index) => (
-              <span
-                key={`${tag}-${index}`}
-                className="text-[10px] bg-gray-400 dark:bg-gray-800 text-gray-700 dark:text-gray-400 px-2 py-0.5 rounded"
-              >
-                #{tag}
-              </span>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
