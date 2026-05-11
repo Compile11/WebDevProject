@@ -166,7 +166,7 @@ export default function HomePage() {
               ) : (
                 posts.map((post, index) => (
                   <div key={post._id}>
-                    <FeedPostCard post={post} />
+                    <FeedPostCard post={post} setPosts={setPosts} />
                     {(index + 1) % 5 === 0 && <AdUnit slot="4836185431" user={currentUser}/>}
                   </div>
                 ))

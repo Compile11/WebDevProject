@@ -200,14 +200,15 @@ app.post(
 app.delete("/api/posts/:id", authMiddleware, adminMiddleware, async (req, res) => {
   try{
     const post = await Post.findById(req.params.id);
+
     if (!post) return res.status(404).json({ message: "post not found" });
 
     if(post.image){
-      const publicId = post.image.split('/').pop.split('.')[0];
+      const publicId = post.image.split('/').pop().split('.')[0];
       await cloudinary.uploader.destroy(`compile_posts/${publicId}`);
     }
 
-    await post.findByIdAndDelete(req.params.id);
+    await Post.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Post deleted successfully" });
 
   }catch(err){

@@ -7,8 +7,9 @@ import { useAuth } from "../context/AuthContext";
 import { getFlairStyle } from "../utils/flairColors";
 import MarkdownPost from "./ui/MarkdownPost";
 import SubscriptionBadge from "../components/subscription/SubscriptionBadge";
+import { deletePost } from "../api/posts";
 
-export default function FeedPostCard({ post }) {
+export default function FeedPostCard({ post, setPosts }) {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
@@ -40,6 +41,22 @@ export default function FeedPostCard({ post }) {
     e.preventDefault();
     e.stopPropagation();
     navigate(`/user/${post.userId?._id}`);
+  };
+
+  const handleDeletePost = async (e) => {
+    e.stopPropagation();
+    if (currentUser?.role !== "admin") return;
+
+    const confirmed = window.confirm("Delete this post?");
+    if (!confirmed) return;
+
+    try {
+      deletePost(post._id)
+      setPosts((prev) => prev.filter((p) => p._id !== post._id))
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("failed to delete post.");
+    }
   };
 
   return (
@@ -85,11 +102,7 @@ export default function FeedPostCard({ post }) {
 
         {currentUser?.role === "admin" && (
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (window.confirm("Delete this post?"))
-                deletePost(post._id).then(() => window.location.reload());
-            }}
+            onClick={handleDeletePost}
             className="ml-auto text-red-500 hover:text-red-400 dark:hover:text-red-700 hover:bg-gray-200 dark:hover:bg-gray-700 p-1 rounded-md cursor-pointer"
           >
             <Trash2 size={16} />
