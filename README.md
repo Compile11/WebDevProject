@@ -1,38 +1,73 @@
-# WebDevProject
+# Compile: An Ethics-First Community Platform
 
-The Backend (/backend)
-The backend is a RESTful API built with Express and MongoDB, handling authentication, data storage, and AI moderation.
-backend/
-├── middleware/       # Gatekeepers for routes (e.g., JWT Auth, Cloudinary/Multer image uploads)
-├── models/           # MongoDB schemas (User.js, Post.js, Comment.js)
-├── routes/           # API route definitions
-│   ├── auth.js       # Login, registration, and password resets
-│   ├── users.js      # Profile fetching and updating
-│   └── comment.js    # Comment creation and AI toxicity checking
-├── utils/            # Helper scripts (e.g., Perspective API moderator logic)
-└── server.js         # The main entry point and Express configuration
+Compile is a high-performance, full-stack discussion forum engineered with an Anticipatory Ethical Framework. It utilizes real-time AI moderation to identify and block toxic content at the point of entry, ensuring a secure environment for community interaction.
 
-The Frontend
-The frontend is a modern, responsive single-page application built with React, Vite, and Tailwind CSS.
-frontend/
-├── src/
-│   ├── api/          # Axios interceptors and functions to communicate with the backend
-│   │
-│   ├── components/   # Reusable UI elements
-│   │   ├── auth/     # Login, Signup, and Forgot Password forms
-│   │   ├── layout/   # Left and Right sidebars for the grid layout
-│   │   ├── navigation/# Top Navbar and Account Dropdown logic
-│   │   └── ui/       # Utility components like the Dark Mode ThemeToggle
-│   │
-│   ├── context/      # React Context providers (AuthContext.jsx for global user state)
-│   │
-│   ├── pages/        # Top-level page views (tied to React Router)
-│   │   ├── HomePage.jsx          # The main 3-column feed
-│   │   ├── PostDetailPage.jsx    # Expanded view for reading a single post and comments
-│   │   ├── ProfilePage.jsx       # The current user's private settings/profile
-│   │   └── PublicProfilePage.jsx # Public-facing view of other users
-│   │
-│   ├── utils/        # Helper functions (e.g., timestamp formatting)
-│   │
-│   ├── App.jsx       # Main application router and layout wrapper
-│   └── main.jsx      # React DOM rendering entry point
+## Key Features
+
+### Proactive AI Moderation
+* **Text Analysis:** Integration with the Perspective API to evaluate toxicity, insult, and threat levels. Submissions exceeding an 80% threshold are blocked before reaching the database.
+* **Visual Gatekeeping:** Automated image moderation via Google Cloud Vision API, using SafeSearch detection to filter out non-compliant media.
+* **Cloud Sanitization:** Automated Cloudinary lifecycle management that purges associated media assets upon post deletion to manage storage and privacy.
+
+### Monetization and Management
+* **Tiered Subscriptions:** Full Stripe API integration for recurring billing, subscription management, and secure customer portals.
+* **Atomic Performance:** High-speed data handling using MongoDB's `$inc` operator for real-time comment and interaction counters, eliminating expensive aggregate queries.
+* **Real-Time Presence:** A silent heartbeat system within the authentication middleware that tracks user activity and displays live staff presence.
+
+### Security and Governance
+* **RBAC Architecture:** Tiered Role-Based Access Control (Admin, Moderator, User) protecting sensitive moderation endpoints.
+* **JWT Authentication:** Secure token-based sessions with hashed credential storage.
+
+## Tech Stack
+
+* **Frontend:** React.js, Tailwind CSS, Lucide-React, Axios
+* **Backend:** Node.js, Express.js
+* **Database:** MongoDB, Mongoose ODM
+* **APIs:** Google Cloud Vision, Perspective API, Stripe, Cloudinary
+
+## Project Structure
+
+
+├── backend/
+│   ├── middleware/       # Auth, Admin, and Upload logic
+│   ├── models/           # Mongoose schemas (User, Post, Comment)
+│   ├── routes/           # API endpoints (Stripe, AI Moderation)
+│   └── utils/            # Logic for toxicity scoring and image moderation
+├── frontend/
+│   ├── src/
+│   │   ├── api/          # Axios client and endpoint definitions
+│   │   ├── components/   # UI components (Feed, Sidebar, Moderation tools)
+│   │   └── utils/        # Formatting and time helpers
+└── .env                  # Configuration for API keys and database URIs
+
+
+## Installation and Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone [repository-url]
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   # Backend
+   cd backend && npm install
+
+   # Frontend
+   cd ../frontend && npm install
+   
+```
+
+3. **Environment Variables:**
+   Create a `.env` file in the `backend` directory with the following:
+   ```env
+   MONGO_URI=your_mongodb_uri
+   JWT_SECRET=your_secret_key
+   STRIPE_SECRET_KEY=your_stripe_key
+   CLOUDINARY_URL=your_cloudinary_url
+   GOOGLE_APPLICATION_CREDENTIALS=path_to_json_key
+   
+```
+
+4. **Run the application:**
+  double click start.sh   
