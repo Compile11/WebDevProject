@@ -1,4 +1,4 @@
-# Compile: An Ethics-First Community Platform
+# Compile
 
 Compile is a high-performance, full-stack discussion forum engineered with an Anticipatory Ethical Framework. It utilizes real-time AI moderation to identify and block toxic content at the point of entry, ensuring a secure environment for community interaction.
 
